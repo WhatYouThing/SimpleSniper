@@ -25,10 +25,10 @@ the default config does not send any api requests other than the login one, whic
 # Donations
 you may dump your cryptocurrency into these wallets:
 
-BTC: ``bc1qqwdd5fkj2g95hhry7nc2kdltcxadvvek2ftrfz``
-ETH: ``0x9B92E475bB98ad3BC2004A531428d5EDe15fAeB7``
-ADA: ``addr1qyhv5adm4uq74xv59jxzsx07ywwse39uvdskzyshqns0he3wef6mhtcpa2vegtyv9qvluguapnztccmpvyfpwp8ql0nq66xgsr``
-LTC: ``LZZZGy4qba8NrhzGiGDB5kNatxK3V67Lnd``
-BCH: ``qpe8gxjv9ta5hddjv3y3qupxta64ra2wtqt09yp8lr``
-XMR: ``46eNvZZ6Lvg69rk865KRsbc7hBhmBaYrmNZXT2yNh6Akc33X9QQx8FT21GNV9FPUY2Hgt1iSBMaKTViKJ2xjm1Ny6FSTm8A``
-DOGE: ``DKFAWC8xGBd6DPK7vK9y5sJeVuHegNuPtJ``
+- BTC: ``bc1qqwdd5fkj2g95hhry7nc2kdltcxadvvek2ftrfz``
+- ETH: ``0x9B92E475bB98ad3BC2004A531428d5EDe15fAeB7``
+- ADA: ``addr1qyhv5adm4uq74xv59jxzsx07ywwse39uvdskzyshqns0he3wef6mhtcpa2vegtyv9qvluguapnztccmpvyfpwp8ql0nq66xgsr``
+- LTC: ``LZZZGy4qba8NrhzGiGDB5kNatxK3V67Lnd``
+- BCH: ``qpe8gxjv9ta5hddjv3y3qupxta64ra2wtqt09yp8lr``
+- XMR: ``46eNvZZ6Lvg69rk865KRsbc7hBhmBaYrmNZXT2yNh6Akc33X9QQx8FT21GNV9FPUY2Hgt1iSBMaKTViKJ2xjm1Ny6FSTm8A``
+- DOGE: ``DKFAWC8xGBd6DPK7vK9y5sJeVuHegNuPtJ``
