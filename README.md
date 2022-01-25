@@ -32,3 +32,5 @@ you may dump your cryptocurrency into these wallets:
 - BCH: ``qpe8gxjv9ta5hddjv3y3qupxta64ra2wtqt09yp8lr``
 - XMR: ``46eNvZZ6Lvg69rk865KRsbc7hBhmBaYrmNZXT2yNh6Akc33X9QQx8FT21GNV9FPUY2Hgt1iSBMaKTViKJ2xjm1Ny6FSTm8A``
 - DOGE: ``DKFAWC8xGBd6DPK7vK9y5sJeVuHegNuPtJ``
+
+- contact me on discord if you wish to donate through paypal
