@@ -12,6 +12,15 @@ The script is currently in very early development, so if you do use it, ill appr
 - Giveaway Sniper (automatic giveaway joiner which will add reactions to giveaway messages) 
 - and some other things i cant think of
 
+# Dependencies
+- you will need to install node.js, which you can get from here: https://nodejs.org/en/
+
+# Installation
+- to install the script and get it working, head over to the releases tab and download the most recent SimpleSniper.zip file.
+- after you unpack the zip, go to the .simplesniper folder and edit the config.json file. there you will find `"token": "your_token_here"`, and to get the script working, you need to replace `your_token_here` with your discord token. you can google for methods how to obtain the token.
+- once your token has been saved in the config file, now you will have to run the install_packages (type `npm update` in terminal if not on windows) file to set up the packages.
+- when node tells you its finished installing packages, you can close the console window and run launch_simplesniper (`npm start` in terminal if not on windows) to start the script.
+
 # FAQ
 ## Why does the script need my token?
 the account token is required to be able to log in. if you think that your token would get sent off to a random webhook, read through the source code.
