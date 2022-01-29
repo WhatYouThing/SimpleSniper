@@ -11,17 +11,18 @@ function getfulldate(shitdowscompatibility) { // returns the day, month, year, a
     var date = new Date
     var output
     var day = date.getDate()
-    if (day < 10) {day = "0" + day}
+    if (day.toString().length < 2) {day = "0" + day}
     var month = date.getMonth() + 1
-    if (month < 10) {month = "0" + month}
+    if (month.toString().length < 2) {month = "0" + month}
     var minute = date.getMinutes() // simple fix for javascript returning single digits like 0:0 instead of 00:00
-    if (minute < 10) {minute = "0" + minute}
+    if (minute.toString().length < 2) {minute = "0" + minute}
     var hour = date.getHours()
-    if (hour < 10) {hour = "0" + hour}
+    if (hour.toString().length < 2) {hour = "0" + hour}
     var seconds = date.getSeconds()
-    if (seconds < 10) {seconds = "0" + seconds}
+    if (seconds.toString().length < 2) {seconds = "0" + seconds}
     var ms = date.getMilliseconds()
-    if (ms < 100) {ms = ms + "0"}
+    if (ms.toString().length < 2) {ms = "0" + ms}
+    if (ms.toString().length < 3) {ms = "0" + ms}
     if (Boolean(shitdowscompatibility)) {
       output = `${day}-${month}-${date.getFullYear()}_${hour}-${minute}-${seconds}.${ms}`
     }
@@ -50,11 +51,15 @@ async function catchexception(error) {
   writefile('.simplesniper/logs/error_logs', `error-${date}.txt`, error)
 }
 var config
-async function readtoken() {
-  log(`\x1b[33mScript loaded! Reading config...\x1b[0m`)
+async function readconfig() {
+  log(`\x1b[33mReading config...\x1b[0m`)
   var output = await readfile(".simplesniper", "config.json") // had to do this because javascript hates being asynchronous
   config = JSON.parse(String(output))
-  log(`\x1b[33mConfig read! Connecting to Discord servers...\x1b[0m`)
+  log(`\x1b[92mConfig read!\x1b[0m`)
+}
+async function connect() {
+  await readconfig()
+  log(`\x1b[33mConnecting to Discord servers...\x1b[0m`)
   client.login(String(config.token))
   .catch(err=>{
     catchexception(err)
@@ -62,14 +67,17 @@ async function readtoken() {
   })
 }
 
+process.on('unhandledRejection', error => {catchexception(error)}) // magical code to catch errors and prevent the script from crashing
+process.on('uncaughtException', error => {catchexception(error)})
+
 client.on("ready", () =>{
-  log(`\x1b[92mConnected to Discord! Logged in as: ${client.user.tag} (${client.user.id})\x1b[0m`)
+  log(`\x1b[92mConnected to Discord! Logged in as ${client.user.tag} (${client.user.id})\x1b[0m`)
   client.user.setStatus(String(config.activity))
 })
 
 client.on('messageDelete', async msg => {
-  if (config.msg_delete_event.enabled == true) {
-    if (config.msg_delete_event.notify == true) {
+  if (config.msg_delete_event.enabled) {
+    if (config.msg_delete_event.notify) {
       if (msg.channel.type == 'dm') {
         var channel = "Direct Messages"
         log(`\x1b[95mDeleted Message Event: From ${msg.author.tag} in Direct Messages\x1b[0m`)
@@ -79,7 +87,7 @@ client.on('messageDelete', async msg => {
         log(`\x1b[95mDeleted Message Event: From ${msg.author.tag} in ${msg.guild.name}, #${msg.channel.name}\x1b[0m`)
       }
     }
-    if (config.msg_delete_event.log == true) {
+    if (config.msg_delete_event.log) {
       try {var attachmentlink = msg.attachments.first().url}
       catch {var attachmentlink = "none"}
       var message = `Content: ${msg.content}\n\nAttachment url: ${attachmentlink}\n\nAuthor: ${msg.author.tag}, ${msg.author.id}\n\nChannel, Guild: ${channel}\n\nMessage sent time (unix): ${(msg.createdAt.getTime()/1000).toFixed(0)}`
@@ -90,8 +98,8 @@ client.on('messageDelete', async msg => {
 })
 
 client.on("messageDeleteBulk", async msgs => {
-  if (config.msg_purge_event.enabled == true) {
-    if (config.msg_purge_event.notify == true) {
+  if (config.msg_purge_event.enabled) {
+    if (config.msg_purge_event.notify) {
       if (msgs.first().channel.type == 'dm') {
         log(`\x1b[95mMessage Purge Event: ${msgs.array().length} messages, first from ${msgs.first().author.tag} in Direct Messages\x1b[0m`)
       }
@@ -99,9 +107,9 @@ client.on("messageDeleteBulk", async msgs => {
         log(`\x1b[95mMessage Purge Event: ${msgs.array().length} messages, first in ${msgs.first().channel.name}, ${msgs.first().guild.name}\x1b[0m`)
       }
     }
-    if (config.msg_delete_event.log == true) {
+    if (config.msg_delete_event.log) {
       msgs.map(async msg=>{
-        if (config.msg_delete_event.notify == true) {
+        if (config.msg_delete_event.notify) {
           if (msg.channel.type == 'dm') {
             var channel = "Direct Messages"
           }
@@ -120,8 +128,8 @@ client.on("messageDeleteBulk", async msgs => {
 })
 
 client.on("messageUpdate", async (oldmsg, newmsg) => {
-  if (config.msg_edit_event.enabled == true) {
-    if (config.msg_edit_event.notify == true) {
+  if (config.msg_edit_event.enabled) {
+    if (config.msg_edit_event.notify) {
       if (oldmsg.channel.type == 'dm') {
         var channel = "Direct Messages"
         log(`\x1b[95mMessage Edit Event: From ${oldmsg.author.tag} in Direct Messages\x1b[0m`)
@@ -131,7 +139,7 @@ client.on("messageUpdate", async (oldmsg, newmsg) => {
         log(`\x1b[95mMessage Edit Event: From ${oldmsg.author.tag} in ${oldmsg.guild.name}, #${oldmsg.channel.name}\x1b[0m`)
       }
     }
-    if (config.msg_edit_event.log == true) {
+    if (config.msg_edit_event.log) {
       try {var attachmentlink = oldmsg.attachments.first().url}
       catch {var attachmentlink = "none"}
       try {var attachmentlink2 = newmsg.attachments.first().url}
@@ -144,20 +152,20 @@ client.on("messageUpdate", async (oldmsg, newmsg) => {
 })
 
 client.on("guildBanAdd", async (server, member) => {
-  if (config.guild_ban_event.enabled_self == true && member.id == client.user.id) {
-    if (config.guild_ban_event.notify == true) {
+  if (config.guild_ban_event.enabled_self && member.id == client.user.id) {
+    if (config.guild_ban_event.notify) {
       log(`\x1b[95mGuild Ban Event: You have been banned from ${server.name} (${server.id})\x1b[0m`)
     }
-    if (config.guild_ban_event.log == true) {
+    if (config.guild_ban_event.log) {
       var date = await getfulldate(true)
       await writefile(".simplesniper/logs/guild_logs", `selfban-${date}.txt`, `Banned from: ${server.name}, ${server.id}\n\nServer owner: ${server.owner.id}`)
     }
   }
-  if (config.guild_ban_event.enabled_others == true && member.id != client.user.id) {
-    if (config.guild_ban_event.notify == true) {
+  if (config.guild_ban_event.enabled_others && member.id != client.user.id) {
+    if (config.guild_ban_event.notify) {
       log(`\x1b[95mGuild Ban Event: ${member.tag} (${member.id}) has been banned from ${server.name} (${server.id})\x1b[0m`)
     }
-    if (config.guild_ban_event.log == true) {
+    if (config.guild_ban_event.log) {
       var date = await getfulldate(true)
       await writefile(".simplesniper/logs/guild_logs", `ban-${date}.txt`, `User: ${member.tag}, ${member.id}\n\nBanned from: ${server.name}, ${server.id}\n\nServer owner: ${server.owner.id}`)
     }
@@ -165,15 +173,29 @@ client.on("guildBanAdd", async (server, member) => {
 })
 
 client.on('guildDelete', async server => {
-  if (config.guild_delete_event.enabled == true) {
-    if (config.guild_delete_event.notify == true) {
+  if (config.guild_delete_event.enabled) {
+    if (config.guild_delete_event.notify) {
       log(`\x1b[95mGuild Delete Event: ${server.name} (${server.id}) was removed from your server list\x1b[0m`)
     }
-    if (config.guild_delete_event.log == true) {
+    if (config.guild_delete_event.log) {
       var date = await getfulldate(true)
       await writefile(".simplesniper/logs/guild_logs", `delete-${date}.txt`, `Deleted server: ${server.name}, ${server.id}\n\nServer owner: ${server.owner.id}`)
     }
   }
 })
 
-readtoken()
+client.on('userNoteUpdate', async (user, oldnote, newnote) => {
+  if (config.note_cmd.enabled_self && newnote) {
+    if (newnote.toLowerCase().startsWith("load")) {
+      log(`\x1b[95mRunning Note Command: load\x1b[0m`)
+      readconfig()
+    }
+    if (newnote.toLowerCase().startsWith("exit")) {
+      log(`\x1b[95mRunning Note Command: exit\x1b[0m`)
+      log(`\x1b[95mStopping SimpleSniper.\x1b[0m`)
+      client.destroy()
+    }
+  }
+})
+
+connect()
