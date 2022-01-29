@@ -4,6 +4,18 @@
 
 The script is currently in very early development, so if you do use it, ill appreciate you sharing feedback or giving bug reports through github.
 
+# Features
+- Deleted message logging
+- Purged messages logging (2+ deletions at once, like when someone is banned)
+- Server ban logging (be notified when you or other users get banned from your servers)
+- Server leave logging (notifies when you leave servers, even if its a kick or a server deletion)
+- Note commands (run script commands by typing them into user notes on discord)
+
+# Note Commands
+- this script makes use out of one of the most useless discord features, the user notes.
+- by typing in commands into yours or others notes, you can easily use script features without the need to send and/or delete any messages, which also could be logged by other selfbot/modded discord users. 
+<img src=https://cdn.discordapp.com/attachments/768172991020007426/937087752200159272/notecmd.png>
+
 # Planned Features
 - Friends Manager (notifications for friends adding/removing you)
 - Control Server (ability to control the script, run commands and recieve webhook notifications in a private server)
