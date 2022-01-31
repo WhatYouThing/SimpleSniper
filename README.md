@@ -10,6 +10,7 @@ The script is currently in very early development, so if you do use it, ill appr
 - Server ban logging (be notified when you or other users get banned from your servers)
 - Server leave logging (notifies when you leave servers, even if its a kick or a server deletion)
 - Note commands (run script commands by typing them into user notes on discord)
+- Giveaway joiner (automatically join giveaways that are started in your servers, highly configurable)
 
 # Note Commands
 - this script makes use out of one of the most useless discord features, the user notes.
@@ -21,7 +22,6 @@ The script is currently in very early development, so if you do use it, ill appr
 - Control Server (ability to control the script, run commands and recieve webhook notifications in a private server)
 - Server Monitor (notifications for being kicked/banned from servers, and for things that happen in the server)
 - Nitro Sniper (detects and claims valid nitro gifts sent in servers, possibly getting you free nitro)
-- Giveaway Sniper (automatic giveaway joiner which will add reactions to giveaway messages) 
 - and some other things i cant think of
 
 # Dependencies
