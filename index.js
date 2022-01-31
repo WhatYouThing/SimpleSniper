@@ -66,6 +66,13 @@ async function connect() {
     log("\x1b[31mThe provided account token might be invalid. Make sure your config file contains a correct account token.\x1b[0m")
   })
 }
+async function rng(min, max, decimal) {
+  return new Promise(resolve =>{
+    var number = Math.random() * (Number(max) - Number(min)) + Number(min)
+    number = number.toFixed(Number(decimal))
+    resolve(Number(number))
+  })
+}
 
 process.on('unhandledRejection', error => {catchexception(error)}) // magical code to catch errors and prevent the script from crashing
 process.on('uncaughtException', error => {catchexception(error)})
@@ -77,6 +84,7 @@ client.on("ready", () =>{
 
 client.on('messageDelete', async msg => {
   if (config.msg_delete_event.enabled) {
+    if (config.msg_delete_event.ignore_bots && msg.author.bot) {return}
     if (config.msg_delete_event.notify) {
       if (msg.channel.type == 'dm') {
         var channel = "Direct Messages"
@@ -128,7 +136,8 @@ client.on("messageDeleteBulk", async msgs => {
 })
 
 client.on("messageUpdate", async (oldmsg, newmsg) => {
-  if (config.msg_edit_event.enabled) {
+  if (config.msg_edit_event.enabled && newmsg.editedAt) {
+    if (config.msg_edit_event.ignore_bots && oldmsg.author.bot) {return}
     if (config.msg_edit_event.notify) {
       if (oldmsg.channel.type == 'dm') {
         var channel = "Direct Messages"
@@ -162,6 +171,7 @@ client.on("guildBanAdd", async (server, member) => {
     }
   }
   if (config.guild_ban_event.enabled_others && member.id != client.user.id) {
+    if (config.guild_ban_event.ignore_bots && member.bot) {return}
     if (config.guild_ban_event.notify) {
       log(`\x1b[95mGuild Ban Event: ${member.tag} (${member.id}) has been banned from ${server.name} (${server.id})\x1b[0m`)
     }
@@ -195,6 +205,43 @@ client.on('userNoteUpdate', async (user, oldnote, newnote) => {
       log(`\x1b[95mStopping SimpleSniper.\x1b[0m`)
       client.destroy()
     }
+  }
+})
+
+client.on('messageReactionAdd', async (reaction, user) => {
+  if (config.giveaway_sniper.enabled && reaction.count <= 1) {
+    if (config.giveaway_sniper.bot_check && !reaction.message.author.bot) { // garbage but works, atleast the config is very flexible
+      return
+    }
+    if (config.giveaway_sniper.enable_filter && !reaction.message.content.includes(config.giveaway_sniper.filter)) {
+      return
+    }
+    if (config.giveaway_sniper.enable_user_list && !config.giveaway_sniper.invert_user_list && !config.giveaway_sniper.user_whitelist.includes(reaction.message.author.id)) {
+      return
+    }
+    if (config.giveaway_sniper.enable_user_list && config.giveaway_sniper.invert_user_list && config.giveaway_sniper.user_whitelist.includes(reaction.message.author.id)) {
+      return
+    }
+    if (config.giveaway_sniper.enable_channel_list && !config.giveaway_sniper.invert_channel_list && !config.giveaway_sniper.channel_whitelist.includes(reaction.message.channel.id)) {
+      return
+    }
+    if (config.giveaway_sniper.enable_channel_list && config.giveaway_sniper.invert_channel_list && config.giveaway_sniper.channel_whitelist.includes(reaction.message.channel.id)) {
+      return
+    }
+    var emoji = reaction.emoji
+    if (config.giveaway_sniper.enable_emoji_list && !config.giveaway_sniper.invert_emoji_list && !config.giveaway_sniper.emoji_whitelist.includes(emoji)) {
+      return
+    }
+    if (config.giveaway_sniper.enable_emoji_list && config.giveaway_sniper.invert_emoji_list && config.giveaway_sniper.emoji_whitelist.includes(emoji)) {
+      return
+    }
+    var timeout = await rng(5000, 60000, 0)
+    if (config.giveaway_sniper.notify) {
+      log(`\x1b[95mGiveaway Sniper: Joining giveaway in ${reaction.message.guild.name} (${reaction.message.guild.id}) sent by ${reaction.message.author.tag}, with ${timeout}ms delay\x1b[0m`)
+    }
+    setTimeout(() => {
+      reaction.message.react(emoji)
+    }, timeout);
   }
 })
 
