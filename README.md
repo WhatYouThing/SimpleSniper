@@ -37,7 +37,10 @@ The script is currently in very early development, so if you do use it, ill appr
 the account token is required to be able to log in. if you think that your token would get sent off to a random webhook, read through the source code.
 
 ## Can i get banned?
-the default config does not send any api requests other than the login one, which makes the script fairly safe to use. features with higher risks wont be added.
+you shouldnt be worried about getting easily banned, the default config does not send any api requests other than the login one, which makes the script fairly safe to use.
+
+## When update? / Did development end?
+i would set the repo to archived if the development was finished, the lack of updates is because i also have to do other things, which stops me from working on the sniper. i likely will push fixes if bugs are found, but feature updates will usually take longer.
 
 # Contact
 - the project doesnt have its own discord server yet, but you may add me directly if you need anything. ``WhatYouThing#0001``
