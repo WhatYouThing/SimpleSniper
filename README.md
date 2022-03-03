@@ -2,15 +2,15 @@
 
 **SimpleSniper is a Node.js script made for Discord, to serve as a useful utility tool for Discord users.**
 
-The script is currently in very early development, so if you do use it, ill appreciate you sharing feedback or giving bug reports through github.
+The script is currently in very early development, so if you do use it, ill appreciate you sharing feedback or giving bug reports through github (or by adding me on discord).
 
 # Features
-- Deleted message logging
-- Purged messages logging (2+ deletions at once, like when someone is banned)
-- Server ban logging (be notified when you or other users get banned from your servers)
-- Server leave logging (notifies when you leave servers, even if its a kick or a server deletion)
-- Note commands (run script commands by typing them into user notes on discord)
-- Giveaway joiner (automatically join giveaways that are started in your servers, highly configurable)
+- deleted message logging
+- purged messages logging (2+ deletions at once, like when someone is banned)
+- server ban logging (be notified when you or other users get banned from your servers)
+- server leave logging (notifies when you leave servers, even if its a kick or a server deletion)
+- note commands (run script commands by typing them into user notes on discord)
+- giveaway joiner (automatically join giveaways that are started in your servers, highly configurable)
 
 # Note Commands
 - this script makes use out of one of the most useless discord features, the user notes.
@@ -20,7 +20,6 @@ The script is currently in very early development, so if you do use it, ill appr
 # Planned Features
 - Friends Manager (notifications for friends adding/removing you)
 - Control Server (ability to control the script, run commands and recieve webhook notifications in a private server)
-- Server Monitor (notifications for being kicked/banned from servers, and for things that happen in the server)
 - Nitro Sniper (detects and claims valid nitro gifts sent in servers, possibly getting you free nitro)
 - and some other things i cant think of
 
