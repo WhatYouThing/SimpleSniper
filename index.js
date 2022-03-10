@@ -1,5 +1,6 @@
 const Discord = require('legend.js');
 const { writeFile, readFile } = require('fs');
+const prompt = require('prompt-sync')()
 const client = new Discord.Client()
 
 async function log(content) {
@@ -32,35 +33,47 @@ function getfulldate(shitdowscompatibility) { // returns the day, month, year, a
     resolve(output)
   })
 }
-function writefile(path, file, content) {
+function writefile(path, content) {
   return new Promise (resolve => {
-    writeFile(`${String(path)}/${String(file)}`, String(content), (error) => {
+    writeFile(`${String(path)}`, String(content), (error) => {
       if (error) {catchexception(error)}
       resolve(undefined)
     })
   })
 }
-function readfile(path, file) {
+function readfile(path) {
   return new Promise (resolve => {
-    readFile(`${String(path)}/${String(file)}`, "utf8", function(err, data) {resolve(data)})
+    readFile(`${String(path)}`, "utf8", function(err, data) {resolve(data)})
   })
 }
 async function catchexception(error) {
   log("\x1b[31mA exception has been caught, logging error information to logs/error_logs.\x1b[0m")
   var date = await getfulldate(true)
-  writefile('.simplesniper/logs/error_logs', `error-${date}.txt`, error)
+  writefile(`.simplesniper/logs/error_logs/error-${date}.txt`, error)
 }
 var config
-async function readconfig() {
-  log(`\x1b[33mReading config...\x1b[0m`)
-  var output = await readfile(".simplesniper", "config.json") // had to do this because javascript hates being asynchronous
+async function readconfig(notify) {
+  if (notify) {log(`\x1b[33mReading config...\x1b[0m`)}
+  var output = await readfile(".simplesniper/config.json") // had to do this because javascript hates being asynchronous
   config = JSON.parse(String(output))
-  log(`\x1b[92mConfig read!\x1b[0m`)
+  if (notify) {log(`\x1b[92mConfig read!\x1b[0m`)}
 }
 async function connect() {
-  await readconfig()
+  await readconfig(false)
+  log(`\x1b[92mSimpleSniper-${config.version} initialized.\x1b[0m`)
+  var token
+  if (String(config.token).toLowerCase() == 'ask') {
+    await log("\x1b[95mYour token is currently set to \"ask\", which means you need to manually input your token to start:")
+    token = prompt()
+    process.stdout.moveCursor(0, -2)
+    process.stdout.clearLine(1) // thanks stackoverflow
+    await log("\x1b[95mToken applied, proceeding with the launch.")
+  }
+  else {
+    token = config.token
+  }
   log(`\x1b[33mConnecting to Discord servers...\x1b[0m`)
-  client.login(String(config.token))
+  client.login(String(token))
   .catch(err=>{
     catchexception(err)
     log("\x1b[31mThe provided account token might be invalid. Make sure your config file contains a correct account token.\x1b[0m")
@@ -79,7 +92,9 @@ process.on('uncaughtException', error => {catchexception(error)})
 
 client.on("ready", () =>{
   log(`\x1b[92mConnected to Discord! Logged in as ${client.user.tag} (${client.user.id})\x1b[0m`)
-  client.user.setStatus(String(config.activity))
+  if (config.activity.enabled) {
+    client.user.setStatus(String(config.activity.type))
+  }
 })
 
 client.on('messageDelete', async msg => {
@@ -100,7 +115,7 @@ client.on('messageDelete', async msg => {
       catch {var attachmentlink = "none"}
       var message = `Content: ${msg.content}\n\nAttachment url: ${attachmentlink}\n\nAuthor: ${msg.author.tag}, ${msg.author.id}\n\nChannel, Guild: ${channel}\n\nMessage sent time (unix): ${(msg.createdAt.getTime()/1000).toFixed(0)}`
       var date = await getfulldate(true)
-      writefile(".simplesniper/logs/msg_logs", `msgdelete-${date}.txt`, message)
+      writefile(`.simplesniper/logs/msg_logs/msgdelete-${date}.txt`, message)
     }
   }
 })
@@ -129,7 +144,7 @@ client.on("messageDeleteBulk", async msgs => {
         catch {var attachmentlink = "none"}
         var message = `Content: ${msg.content}\n\nAttachment url: ${attachmentlink}\n\nAuthor: ${msg.author.tag}, ${msg.author.id}\n\nChannel, Guild: ${channel}\n\nMessage sent time (unix): ${(msg.createdAt.getTime()/1000).toFixed(0)}`
         var date = await getfulldate(true)
-        await writefile(".simplesniper/logs/msg_logs", `purge${msgs.array().indexOf(msg)}-${date}.txt`, message)
+        await writefile(`.simplesniper/logs/msg_logs/purge${msgs.array().indexOf(msg)}-${date}.txt`, message)
       })
     }
   }
@@ -155,7 +170,7 @@ client.on("messageUpdate", async (oldmsg, newmsg) => {
       catch {var attachmentlink2 = "none"}
       var message = `Content before: ${oldmsg.content}\n\nContent after: ${newmsg.content}\n\nAttachment url before: ${attachmentlink}\n\nAttachment url after: ${attachmentlink2}\n\nAuthor: ${oldmsg.author.tag}, ${oldmsg.author.id}\n\nChannel, Guild: ${channel}\n\nMessage sent time (unix): ${(oldmsg.createdAt.getTime()/1000).toFixed(0)}\n\nMessage edit time (unix): ${(newmsg.editedAt.getTime()/1000).toFixed(0)}`
       var date = await getfulldate(true)
-      writefile(".simplesniper/logs/msg_logs", `edit-${date}.txt`, message)
+      writefile(`.simplesniper/logs/msg_logs/edit-${date}.txt`, message)
     }
   }
 })
@@ -167,7 +182,7 @@ client.on("guildBanAdd", async (server, member) => {
     }
     if (config.guild_ban_event.log) {
       var date = await getfulldate(true)
-      await writefile(".simplesniper/logs/guild_logs", `selfban-${date}.txt`, `Banned from: ${server.name}, ${server.id}\n\nServer owner: ${server.owner.id}`)
+      await writefile(`.simplesniper/logs/guild_logs/selfban-${date}.txt`, `Banned from: ${server.name}, ${server.id}\n\nServer owner: ${server.owner.id}`)
     }
   }
   if (config.guild_ban_event.enabled_others && member.id != client.user.id) {
@@ -177,7 +192,7 @@ client.on("guildBanAdd", async (server, member) => {
     }
     if (config.guild_ban_event.log) {
       var date = await getfulldate(true)
-      await writefile(".simplesniper/logs/guild_logs", `ban-${date}.txt`, `User: ${member.tag}, ${member.id}\n\nBanned from: ${server.name}, ${server.id}\n\nServer owner: ${server.owner.id}`)
+      await writefile(`.simplesniper/logs/guild_logs/ban-${date}.txt`, `User: ${member.tag}, ${member.id}\n\nBanned from: ${server.name}, ${server.id}\n\nServer owner: ${server.owner.id}`)
     }
   }
 })
@@ -189,7 +204,7 @@ client.on('guildDelete', async server => {
     }
     if (config.guild_delete_event.log) {
       var date = await getfulldate(true)
-      await writefile(".simplesniper/logs/guild_logs", `delete-${date}.txt`, `Deleted server: ${server.name}, ${server.id}\n\nServer owner: ${server.owner.id}`)
+      await writefile(`.simplesniper/logs/guild_logs/delete-${date}.txt`, `Deleted server: ${server.name}, ${server.id}\n\nServer owner: ${server.owner.id}`)
     }
   }
 })
@@ -198,7 +213,7 @@ client.on('userNoteUpdate', async (user, oldnote, newnote) => {
   if (config.note_cmd.enabled_self && newnote) {
     if (newnote.toLowerCase().startsWith("load")) {
       log(`\x1b[95mRunning Note Command: load\x1b[0m`)
-      readconfig()
+      readconfig(true)
     }
     if (newnote.toLowerCase().startsWith("exit")) {
       log(`\x1b[95mRunning Note Command: exit\x1b[0m`)
@@ -235,7 +250,7 @@ client.on('messageReactionAdd', async (reaction, user) => {
     if (config.giveaway_sniper.enable_emoji_list && config.giveaway_sniper.invert_emoji_list && config.giveaway_sniper.emoji_whitelist.includes(emoji)) {
       return
     }
-    var timeout = await rng(5000, 60000, 0)
+    var timeout = await rng(config.giveaway_sniper.delay_min, config.giveaway_sniper.delay_max, 0)
     if (config.giveaway_sniper.notify) {
       log(`\x1b[95mGiveaway Sniper: Joining giveaway in ${reaction.message.guild.name} (${reaction.message.guild.id}) sent by ${reaction.message.author.tag}, with ${timeout}ms delay\x1b[0m`)
     }
