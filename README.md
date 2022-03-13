@@ -11,6 +11,7 @@ The script is currently in very early development, so if you do use it, ill appr
 - server leave logging (notifies when you leave servers, even if its a kick or a server deletion)
 - note commands (run script commands by typing them into user notes on discord)
 - giveaway joiner (automatically join giveaways that are started in your servers, highly configurable)
+- support for tokens as launch arguments
 
 # Note Commands
 - this script makes use out of one of the most useless discord features, the user notes.
