@@ -60,14 +60,21 @@ async function readconfig(notify) {
 }
 async function connect() {
   await readconfig(false)
+  process.stdout.moveCursor(0, -420)
+  process.stdout.clearScreenDown()
   log(`\x1b[92mSimpleSniper-${config.version} initialized.\x1b[0m`)
   var token
-  if (String(config.token).toLowerCase() == 'ask') {
+  var launcharg = process.argv.slice(2)
+  if (launcharg != '') {
+    token = launcharg
+    await log("\x1b[95mFound a launch argument, applying it as the token and starting.\x1b[0m")
+  }
+  else if (String(config.token).toLowerCase() == 'ask') {
     await log("\x1b[95mYour token is currently set to \"ask\", which means you need to manually input your token to start:")
     token = prompt()
     process.stdout.moveCursor(0, -2)
     process.stdout.clearLine(1) // thanks stackoverflow
-    await log("\x1b[95mToken applied, proceeding with the launch.")
+    await log("\x1b[95mToken applied, proceeding with the launch.\x1b[0m")
   }
   else {
     token = config.token
