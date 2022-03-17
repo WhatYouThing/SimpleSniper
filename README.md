@@ -4,6 +4,8 @@
 
 The script is currently in very early development, so if you do use it, ill appreciate you sharing feedback or giving bug reports through github (or by adding me on discord).
 
+DISCORD SERVER: https://discord.gg/HACZXtr
+
 # Features
 - deleted message logging
 - purged messages logging (2+ deletions at once, like when someone is banned)
@@ -44,7 +46,7 @@ you shouldnt be worried about getting easily banned, the default config does not
 i would set the repo to archived if the development was finished, the lack of updates is because i also have to do other things, which stops me from working on the sniper. i likely will push fixes if bugs are found, but feature updates will usually take longer.
 
 # Contact
-- the project doesnt have its own discord server yet, but you may add me directly if you need anything. ``WhatYouThing#0001``
+- join up on our [discord server](https://discord.gg/HACZXtr) if you have any questions, bug reports or just want to join the community.
 
 # Donations
 you may dump your cryptocurrency into these wallets:
