@@ -2,7 +2,7 @@
 
 **SimpleSniper is a Node.js script made for Discord, to serve as a useful utility tool for Discord users.**
 
-The script is currently in very early development, so if you do use it, ill appreciate you sharing feedback or giving bug reports through github (or by adding me on discord).
+The script is currently in very early development, so if you do use it, ill appreciate you sharing feedback or giving bug reports through github (or by joining the discord).
 
 DISCORD SERVER: https://discord.gg/HACZXtr
 
@@ -14,6 +14,7 @@ DISCORD SERVER: https://discord.gg/HACZXtr
 - note commands (run script commands by typing them into user notes on discord)
 - giveaway joiner (automatically join giveaways that are started in your servers, highly configurable)
 - support for tokens as launch arguments
+- multi-thread (running multiple tokens at the same time)
 
 # Note Commands
 - this script makes use out of one of the most useless discord features, the user notes.
