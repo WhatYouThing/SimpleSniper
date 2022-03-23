@@ -162,7 +162,7 @@ async function auth(token, accnumber) {
         process.stdout.clearScreenDown()
       }
       if (input.toLowerCase().startsWith("status")) {
-        log(`${prefix}\x1b[Uptime: ${client.uptime}ms | Ping: ${client.ping}\x1b[0m`)
+        log(`${prefix}\x1b[95mUptime: ${client.uptime}ms | Ping: ${client.ping}\x1b[0m`)
       }
       resolve(undefined)
     })
