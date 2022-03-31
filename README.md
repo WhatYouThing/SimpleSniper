@@ -46,6 +46,9 @@ you shouldnt be worried about getting easily banned, the default config does not
 ## When update? / Did development end?
 i would set the repo to archived if the development was finished, the lack of updates is because i also have to do other things, which stops me from working on the sniper. i likely will push fixes if bugs are found, but feature updates will usually take longer.
 
+## How do i configure the script?
+visit the [wiki](https://github.com/WhatYouThing/SimpleSniper/wiki)
+
 # Contact
 - join up on our [discord server](https://discord.gg/HACZXtr) if you have any questions, bug reports or just want to join the community.
 
