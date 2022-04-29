@@ -1,6 +1,6 @@
 const Discord = require('legend.js');
 const { writeFile, readFile } = require('fs');
-const prompt = require('prompt-sync')()
+const readlinesync = require('readline-sync')
 
 async function log(content, r, g, b) {
   var color = await rgbx1b(r, g, b)
@@ -125,6 +125,8 @@ async function main() {
     process.stdout.moveCursor(0, -process.stdout.rows)
     process.stdout.clearScreenDown()
   }
+  process.stdin.setEncoding("utf8")
+  process.stdout.setEncoding("utf8")
   log(`SimpleSniper-${config.version} initialized.`, 86, 98, 246)
   var token
   var launcharg = process.argv.slice(2)
@@ -133,8 +135,8 @@ async function main() {
     await log("Found a launch argument, applying it as the token and starting.", 86, 98, 246)
   }
   else if (String(config.token).toLowerCase() == 'ask') {
-    await log("Your token is currently set to \"ask\", please input your token to start:", 86, 98, 246)
-    token = prompt()
+    await log("Your token is currently set to \"ask\", please input your token to start: ", 86, 98, 246)
+    token = readlinesync.question("")
     process.stdout.moveCursor(0, -2)
     process.stdout.clearScreenDown() // thanks stackoverflow
     await log("Token applied, proceeding with the launch.", 86, 98, 246)
@@ -160,27 +162,38 @@ async function auth(token, accnumber) {
   const client = new Discord.Client()
   async function command(input, cmdtype) {
     return new Promise(async resolve => {
-      if (input != undefined && cmdtype != undefined) {
-        log(`${prefix}Running ${cmdtype} Command: ${input}`, 86, 98, 246)
-      }
       if (input.toLowerCase().startsWith("load")) {
+        log(`${prefix}Running ${cmdtype} Command: ${input}`, 86, 98, 246)
         await readconfig(true)
         return
       }
-      if (input.toLowerCase().startsWith("exit")) {
+      if (input.toLowerCase().startsWith("logout")) {
+        log(`${prefix}Running ${cmdtype} Command: ${input}`, 86, 98, 246)
         log(`${prefix}Logging out of SimpleSniper.`, 86, 98, 246)
         client.destroy()
+      }
+      if (input.toLowerCase().startsWith("exit")) {
+        log(`${prefix}Running ${cmdtype} Command: ${input}`, 86, 98, 246)
+        log(`${prefix}Exiting SimpleSniper.`, 86, 98, 246)
+        client.destroy()
+        process.exit(0)
       }
       if (input.toLowerCase().startsWith("clear")) {
         process.stdout.moveCursor(0, -process.stdout.rows)
         process.stdout.clearScreenDown()
       }
       if (input.toLowerCase().startsWith("status")) {
+        log(`${prefix}Running ${cmdtype} Command: ${input}`, 86, 98, 246)
         log(`${prefix}Uptime: ${client.uptime}ms | Ping: ${client.ping}`, 86, 98, 246)
       }
       resolve(undefined)
     })
   }
+  process.stdin.on("data", async data => {
+    process.stdout.moveCursor(0, -1)
+    process.stdout.clearScreenDown()
+    command(String(data).trim(), "CLI")
+  })
   client.on("ready", async () => {
     log(`Connected to Discord! Logged in as ${client.user.tag} (${client.user.id})`, 86, 98, 246)
     if (config.activity.enabled) {
@@ -414,6 +427,7 @@ async function auth(token, accnumber) {
       }
     }
   })
+  process.stdin.resume()
   client.login(token)
 }
 
