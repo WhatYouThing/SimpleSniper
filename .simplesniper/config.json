@@ -1,0 +1,110 @@
+{
+    "version": "0.1.0",
+    "token": "ask",
+    "truncate_max": 50,
+    "splitter": "; ",
+    "clear_cli_on_start": true,
+    "activity": {
+        "enabled": false,
+        "type": "invisible"
+    },
+    "crash_handler": {
+        "log": true,
+        "notify": true,
+        "notify_r": 255,
+        "notify_g": 75,
+        "notify_b": 75
+    },
+    "note_cmd": {
+        "enabled_self": true,
+        "enabled_others": false,
+        "notify": true
+    },
+    "control_server": {
+        "enabled": false,
+        "cs_prefix": "ss",
+        "cs_id": "control_server_id_here",
+        "enable_channel": false,
+        "cs_channel": "whitelisted_channel_id_here_if_enabled",
+        "enable_manager": true,
+        "cs_manager": "your_account_id_here_if_enabled"
+    },
+    "msg_create_event": {
+        "enabled_server": false,
+        "enabled_dm": false,
+        "log": true,
+        "notify": true,
+        "ignore_bots": true,
+        "notify_r": 244,
+        "notify_g": 127,
+        "notify_b": 255
+    },
+    "msg_delete_event": {
+        "enabled": true,
+        "log": true,
+        "notify": true,
+        "ignore_bots": true,
+        "notify_r": 244,
+        "notify_g": 127,
+        "notify_b": 255
+    },
+    "msg_purge_event": {
+        "enabled": true,
+        "log": true,
+        "notify": true,
+        "notify_r": 244,
+        "notify_g": 127,
+        "notify_b": 255
+    },
+    "msg_edit_event": {
+        "enabled": true,
+        "log": true,
+        "notify": true,
+        "ignore_bots": true,
+        "notify_r": 244,
+        "notify_g": 127,
+        "notify_b": 255
+    },
+    "guild_ban_event": {
+        "enabled_self": true,
+        "enabled_others": true,
+        "log": true,
+        "notify": true,
+        "ignore_bots": true,
+        "notify_r": 244,
+        "notify_g": 127,
+        "notify_b": 255
+    },
+    "guild_delete_event": {
+        "enabled": true,
+        "log": true,
+        "notify": true,
+        "notify_r": 244,
+        "notify_g": 127,
+        "notify_b": 255
+    },
+    "giveaway_sniper": {
+        "enabled": false,
+        "notify": true,
+        "log": true,
+        "bot_check": true,
+        "filter": "GIVEAWAY",
+        "enable_filter": true,
+        "invert_filter": false,
+        "filter_case_sensitive": false,
+        "user_whitelist": "294882584201003009",
+        "enable_user_list": true,
+        "invert_user_list": false,
+        "channel_whitelist": "",
+        "enable_channel_list": false,
+        "invert_channel_list": false,
+        "emoji_whitelist": "🎉",
+        "enable_emoji_list": true,
+        "invert_emoji_list": false,
+        "delay_min": 30000,
+        "delay_max": 300000,
+        "notify_r": 244,
+        "notify_g": 127,
+        "notify_b": 255
+    }
+}
