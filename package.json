@@ -1,0 +1,20 @@
+{
+  "name": "simplesniper",
+  "bin": "index.js",
+  "version": "too-lazy-to-update-this-value",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "form-data": "^3.0.1",
+    "fs": "^0.0.1-security",
+    "legend.js": "^11.7.5",
+    "nodemon": "^2.0.15",
+    "readline-sync": "^1.4.10"
+  },
+  "scripts": {
+    "start": "title SimpleSniper && node src/index.js",
+    "start-notitle": "node src/index.js"
+  },
+  "author": "WhatYouThing",
+  "license": "Apache License 2.0"
+}
