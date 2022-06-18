@@ -1,6 +1,6 @@
 const Discord = require('legend.js');
 const { writeFile, readFile, appendFile, existsSync } = require('fs');
-const readlinesync = require('readline-sync')
+const readlinesync = require('readline-sync');
 
 async function notif(content, r, g, b) {
   var color = await rgbx1b(r, g, b)
@@ -213,7 +213,7 @@ async function main() {
     token = String(tokenlist).split('\n')
     var tokencount = 0
     for (var i of token) {
-      tokencount = tokencount + 1
+      tokencount += 1
       auth(String(i).trim(), Number(tokencount))
     }
     return
@@ -226,6 +226,7 @@ async function main() {
 async function auth(token, accnumber) {
   var prefix = ''
   const client = new Discord.Client()
+
   async function command(input, cmdtype) {
     return new Promise(async resolve => {
       if (input.toLowerCase().startsWith("load")) {
@@ -279,11 +280,21 @@ async function auth(token, accnumber) {
       resolve(undefined)
     })
   }
+
   process.stdin.on("data", async data => {
-    process.stdout.moveCursor(0, -1)
+    var linecount = 0, lines = String(data)
+    while (lines.length > 0) {
+      if (linecount >= 1000) {
+        break
+      }
+      lines = lines.slice(process.stdout.columns)
+      linecount += 1
+    } 
+    process.stdout.moveCursor(0, -linecount)
     process.stdout.clearScreenDown()
     command(String(data).trim(), "CLI")
   })
+
   client.on("ready", async () => {
     notif(`Connected to Discord! Logged in as ${client.user.tag} (${client.user.id})`, 86, 98, 246)
     if (config.activity.enabled) {
@@ -293,6 +304,7 @@ async function auth(token, accnumber) {
       prefix = `[${client.user.tag}] `
     }
   })
+
   client.on("message", async msg => {
     if (config.control_server.enabled) {
       controlserver: {
@@ -353,6 +365,7 @@ async function auth(token, accnumber) {
       }
     }
   })
+
   client.on('messageDelete', async msg => {
     if (config.msg_delete_event.enabled) {
       if (config.msg_delete_event.ignore_bots && msg.author.bot) {return}
@@ -370,6 +383,7 @@ async function auth(token, accnumber) {
       }
     }
   })
+
   client.on("messageDeleteBulk", async msgs => {
     if (config.msg_purge_event.enabled) {
       if (config.msg_purge_event.notify) {
@@ -386,6 +400,7 @@ async function auth(token, accnumber) {
       }
     }
   })
+
   client.on("messageUpdate", async (oldmsg, newmsg) => {
     if (config.msg_edit_event.enabled && newmsg.editedAt) {
       if (config.msg_edit_event.ignore_bots && oldmsg.author.bot) {return}
@@ -405,6 +420,7 @@ async function auth(token, accnumber) {
       }
     }
   })
+
   client.on("guildBanAdd", async (server, member) => {
     if (config.guild_ban_event.enabled_self && member.id == client.user.id) {
       if (config.guild_ban_event.notify) {
@@ -424,6 +440,7 @@ async function auth(token, accnumber) {
       }
     }
   })
+
   client.on('guildDelete', async server => {
     if (config.guild_delete_event.enabled) {
       if (config.guild_delete_event.notify) {
@@ -434,11 +451,13 @@ async function auth(token, accnumber) {
       }
     }
   })
+
   client.on('userNoteUpdate', async (user, oldnote, newnote) => {
     if (config.note_cmd.enabled_self && newnote) {
       command(newnote, "Note")
     }
   })
+
   client.on('messageReactionAdd', async (reaction, user) => {
     if (config.giveaway_sniper.enabled && reaction.count <= 1 && reaction.message.channel.type == 'text') {
       giveawaysniper: {
