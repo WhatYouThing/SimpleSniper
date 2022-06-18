@@ -6,6 +6,8 @@ The script is currently in very early development, so if you do use it, ill appr
 
 DISCORD SERVER: https://discord.gg/HACZXtr
 
+<img src=https://cdn.discordapp.com/attachments/768172991020007426/987829538845245460/sniper.png>
+
 # Features
 - deleted message logging
 - purged messages logging (2+ deletions at once, like when someone is banned)
