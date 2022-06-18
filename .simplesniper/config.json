@@ -1,5 +1,5 @@
 {
-    "version": "0.1.0",
+    "version": "0.1.1",
     "token": "ask",
     "truncate_max": 50,
     "splitter": "; ",
@@ -17,7 +17,7 @@
     },
     "note_cmd": {
         "enabled_self": true,
-        "enabled_others": false,
+        "enabled_others": "this_value_doesnt_do_anything_yet",
         "notify": true
     },
     "control_server": {
