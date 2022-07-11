@@ -1,9 +1,10 @@
 {
-    "version": "0.1.1",
-    "token": "ask",
+    "version": "0.1.2",
+    "token": "your_token_here",
     "truncate_max": 50,
     "splitter": "; ",
     "clear_cli_on_start": true,
+    "american_dates": false,
     "activity": {
         "enabled": false,
         "type": "invisible"
@@ -26,7 +27,7 @@
         "cs_id": "control_server_id_here",
         "enable_channel": false,
         "cs_channel": "whitelisted_channel_id_here_if_enabled",
-        "enable_manager": true,
+        "enable_manager": false,
         "cs_manager": "your_account_id_here_if_enabled"
     },
     "msg_create_event": {
@@ -37,7 +38,20 @@
         "ignore_bots": true,
         "notify_r": 244,
         "notify_g": 127,
-        "notify_b": 255
+        "notify_b": 255,
+        "filter": "phrase1; phrase2; phrase3",
+        "enable_filter": false,
+        "invert_filter": false,
+        "filter_case_sensitive": false,
+        "user_whitelist": "userid1; userid2; userid3",
+        "enable_user_list": false,
+        "invert_user_list": false,
+        "channel_whitelist": "channelid1; channelid2; channelid3",
+        "enable_channel_list": false,
+        "invert_channel_list": false,
+        "guild_whitelist": "guildid1; guildid2; guildid3",
+        "enable_guild_list": false,
+        "invert_guild_list": false
     },
     "msg_delete_event": {
         "enabled": true,
@@ -46,15 +60,42 @@
         "ignore_bots": true,
         "notify_r": 244,
         "notify_g": 127,
-        "notify_b": 255
+        "notify_b": 255,
+        "filter": "phrase1; phrase2; phrase3",
+        "enable_filter": false,
+        "invert_filter": false,
+        "filter_case_sensitive": false,
+        "user_whitelist": "userid1; userid2; userid3",
+        "enable_user_list": false,
+        "invert_user_list": false,
+        "channel_whitelist": "channelid1; channelid2; channelid3",
+        "enable_channel_list": false,
+        "invert_channel_list": false,
+        "guild_whitelist": "guildid1; guildid2; guildid3",
+        "enable_guild_list": false,
+        "invert_guild_list": false
     },
     "msg_purge_event": {
         "enabled": true,
         "log": true,
         "notify": true,
+        "ignore_bots": true,
         "notify_r": 244,
         "notify_g": 127,
-        "notify_b": 255
+        "notify_b": 255,
+        "filter": "phrase1; phrase2; phrase3",
+        "enable_filter": false,
+        "invert_filter": false,
+        "filter_case_sensitive": false,
+        "user_whitelist": "userid1; userid2; userid3",
+        "enable_user_list": false,
+        "invert_user_list": false,
+        "channel_whitelist": "channelid1; channelid2; channelid3",
+        "enable_channel_list": false,
+        "invert_channel_list": false,
+        "guild_whitelist": "guildid1; guildid2; guildid3",
+        "enable_guild_list": false,
+        "invert_guild_list": false
     },
     "msg_edit_event": {
         "enabled": true,
@@ -63,7 +104,20 @@
         "ignore_bots": true,
         "notify_r": 244,
         "notify_g": 127,
-        "notify_b": 255
+        "notify_b": 255,
+        "filter": "phrase1; phrase2; phrase3",
+        "enable_filter": false,
+        "invert_filter": false,
+        "filter_case_sensitive": false,
+        "user_whitelist": "userid1; userid2; userid3",
+        "enable_user_list": false,
+        "invert_user_list": false,
+        "channel_whitelist": "channelid1; channelid2; channelid3",
+        "enable_channel_list": false,
+        "invert_channel_list": false,
+        "guild_whitelist": "guildid1; guildid2; guildid3",
+        "enable_guild_list": false,
+        "invert_guild_list": false
     },
     "guild_ban_event": {
         "enabled_self": true,
@@ -73,7 +127,13 @@
         "ignore_bots": true,
         "notify_r": 244,
         "notify_g": 127,
-        "notify_b": 255
+        "notify_b": 255,
+        "user_whitelist": "userid1; userid2; userid3",
+        "enable_user_list": false,
+        "invert_user_list": false,
+        "guild_whitelist": "guildid1; guildid2; guildid3",
+        "enable_guild_list": false,
+        "invert_guild_list": false
     },
     "guild_delete_event": {
         "enabled": true,
@@ -81,7 +141,10 @@
         "notify": true,
         "notify_r": 244,
         "notify_g": 127,
-        "notify_b": 255
+        "notify_b": 255,
+        "guild_whitelist": "guildid1; guildid2; guildid3",
+        "enable_guild_list": false,
+        "invert_guild_list": false
     },
     "giveaway_sniper": {
         "enabled": false,
