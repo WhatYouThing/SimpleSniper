@@ -16,30 +16,48 @@ async function log(content) {
     await appendfile(`.simplesniper/log.txt`, `\n[${time}] ${content}`)
   }
 }
-function getfulldate(shitdowscompatibility) { // returns the day, month, year, and the current time.
+function getfulldate(shitdowscompatibility) { 
   return new Promise (resolve => {
     var date = new Date
-    var output
     var day = date.getDate()
-    if (day.toString().length < 2) {day = "0" + day}
+    if (day.toString().length < 2) {
+      day = "0" + day
+    }
     var month = date.getMonth() + 1
-    if (month.toString().length < 2) {month = "0" + month}
-    var minute = date.getMinutes() // simple but scuffed fixes for javascript returning single digits like 0:0 instead of 00:00
-    if (minute.toString().length < 2) {minute = "0" + minute}
+    if (month.toString().length < 2) {
+      month = "0" + month
+    }
+    var minute = date.getMinutes() 
+    if (minute.toString().length < 2) {
+      minute = "0" + minute
+    }
     var hour = date.getHours()
-    if (hour.toString().length < 2) {hour = "0" + hour}
+    if (hour.toString().length < 2) {
+      hour = "0" + hour
+    }
     var seconds = date.getSeconds()
-    if (seconds.toString().length < 2) {seconds = "0" + seconds}
+    if (seconds.toString().length < 2) {
+      seconds = "0" + seconds
+    }
     var ms = date.getMilliseconds()
-    if (ms.toString().length < 2) {ms = "0" + ms}
-    if (ms.toString().length < 3) {ms = "0" + ms}
-    if (shitdowscompatibility) {
-      output = `${day}-${month}-${date.getFullYear()}_${hour}-${minute}-${seconds}.${ms}`
+    if (ms.toString().length < 2) {
+      ms = "0" + ms
+    }
+    if (ms.toString().length < 3) {
+      ms = "0" + ms
+    }
+    if (config.american_dates) {
+      var daymonth = `${month}-${day}`
     }
     else {
-      output = `${day}-${month}-${date.getFullYear()} ${hour}:${minute}:${seconds}.${ms}`
+      var daymonth = `${day}-${month}`
     }
-    resolve(output)
+    if (shitdowscompatibility) {
+      resolve(`${daymonth}-${date.getFullYear()}_${hour}-${minute}-${seconds}.${ms}`)
+    }
+    else {
+      resolve(`${daymonth}-${date.getFullYear()} ${hour}:${minute}:${seconds}.${ms}`)
+    }
   })
 }
 function writefile(path, content) {
@@ -82,10 +100,14 @@ async function catchexception(error) {
 }
 var config
 async function readconfig(notify) {
-  if (notify) {notif(`\x1b[33mReading config...`), 86, 98, 246}
-  var output = await readfile(".simplesniper/config.json") // had to do this because javascript hates being asynchronous
+  if (notify) {
+    notif(`\x1b[33mReading config...`), 86, 98, 246
+  }
+  var output = await readfile(".simplesniper/config.json")
   config = JSON.parse(String(output))
-  if (notify) {notif(`\x1b[92mConfig read!`), 86, 98, 246}
+  if (notify) {
+    notif(`\x1b[92mConfig read!`), 86, 98, 246
+  }
 }
 async function rng(min, max, decimal) {
   return new Promise(resolve =>{
@@ -148,10 +170,10 @@ async function getattachments(msg) {
     var counter = 0
     msg.attachments.map(async attachment => {
       if (counter == 0) {
-        attachments = attachments + attachment.url
+        attachments += attachment.url
       }
       else {
-        attachments = attachments + `, ${attachment.url}`
+        attachments += `, ${attachment.url}`
       }
       counter++
     })
@@ -191,8 +213,6 @@ async function main() {
     process.stdout.moveCursor(0, -process.stdout.rows)
     process.stdout.clearScreenDown()
   }
-  process.stdin.setEncoding("utf8")
-  process.stdout.setEncoding("utf8")
   notif(`SimpleSniper-${config.version} initialized.`, 86, 98, 246)
   var token
   var launcharg = process.argv.slice(2)
@@ -203,49 +223,41 @@ async function main() {
   else if (String(config.token).toLowerCase() == 'ask') {
     await notif("Your token is currently set to \"ask\", please input your token to start: ", 86, 98, 246)
     token = readlinesync.question("")
-    process.stdout.moveCursor(0, -2)
-    process.stdout.clearScreenDown() // thanks stackoverflow
+    var linecount = 0, lines = String(token)
+    while (lines.length > 0) {
+      if (linecount >= 250) {
+        break
+      }
+      lines = lines.slice(process.stdout.columns)
+      linecount += 1
+    } 
+    process.stdout.moveCursor(0, -linecount)
+    process.stdout.clearScreenDown()
     await notif("Token applied, proceeding with the launch.", 86, 98, 246)
-  }
-  else if (String(config.token).toLowerCase() == 'multirun') {
-    await notif("Your token is currently set to \"multirun\", reading tokenlist.txt and logging in on all accounts...", 86, 98, 246)
-    var tokenlist = await readfile(".simplesniper/multirun/tokenlist.txt")
-    token = String(tokenlist).split('\n')
-    var tokencount = 0
-    for (var i of token) {
-      tokencount += 1
-      auth(String(i).trim(), Number(tokencount))
-    }
-    return
   }
   else {
     token = config.token
   }
   auth(String(token))
 }
-async function auth(token, accnumber) {
-  var prefix = ''
+async function auth(token) {
   const client = new Discord.Client()
-
   async function command(input, cmdtype) {
     return new Promise(async resolve => {
       if (input.toLowerCase().startsWith("load")) {
-        notif(`${prefix}Running ${cmdtype} Command: ${input}`, 86, 98, 246)
+        notif(`Running ${cmdtype} Command: ${input}`, 86, 98, 246)
         await readconfig(true)
         return
       }
       if (input.toLowerCase().startsWith("logout")) {
-        if (String(input).includes(" ") && Number(String(input).split(" ").pop()) != accnumber) {
-          return
-        }
-        notif(`${prefix}Running ${cmdtype} Command: ${input}`, 86, 98, 246)
-        notif(`${prefix}Logging out ${client.user.tag} out of SimpleSniper.`, 86, 98, 246)
-        client.destroy()
+        notif(`Running ${cmdtype} Command: ${input}`, 86, 98, 246)
+        notif(`Logging ${client.user.tag} out of SimpleSniper.`, 86, 98, 246)
         client.removeAllListeners()
+        client.destroy()
       }
       if (input.toLowerCase().startsWith("exit")) {
-        notif(`${prefix}Running ${cmdtype} Command: ${input}`, 86, 98, 246)
-        notif(`${prefix}Exiting SimpleSniper.`, 86, 98, 246)
+        notif(`Running ${cmdtype} Command: ${input}`, 86, 98, 246)
+        notif(`Exiting SimpleSniper.`, 86, 98, 246)
         client.destroy()
         process.exit(0)
       }
@@ -254,28 +266,23 @@ async function auth(token, accnumber) {
         process.stdout.clearScreenDown()
       }
       if (input.toLowerCase().startsWith("status")) {
-        if (String(input).includes(" ") && Number(String(input).split(" ").pop()) != accnumber) {
-          return
-        }
-        notif(`${prefix}Running ${cmdtype} Command: ${input}`, 86, 98, 246)
-        notif(`${prefix}Uptime: ${client.uptime}ms | Ping: ${client.ping}`, 86, 98, 246)
+        notif(`Running ${cmdtype} Command: ${input}`, 86, 98, 246)
+        notif(`Uptime: ${client.uptime}ms | Ping: ${client.ping}`, 86, 98, 246)
       }
-      if (input.toLowerCase().startsWith("login") && config.token != "multirun") {
-        notif(`${prefix}Running ${cmdtype} Command: ${String(input).split(" ").shift()}`, 86, 98, 246)
-        auth(String(input).split(" ").pop().trim(), accnumber)
-        /*
+      if (input.toLowerCase().startsWith("login")) {
+        notif(`Running ${cmdtype} Command: ${String(input).split(" ").shift()}`, 86, 98, 246)
+        var formattedtoken = String(input).split(" ").pop().trim()
         if (!String(input).includes(" ")) {
           notif(`You need to provide a token to be used with the command.`, 86, 98, 246)
           return
         }
-        else if (String(input).split(" ").pop() == token) {
+        else if (formattedtoken == token) {
           notif(`Provided token is already used.`, 86, 98, 246)
           return
         }
         else {
-          
+          auth(formattedtoken)
         }
-        */
       }
       resolve(undefined)
     })
@@ -284,7 +291,7 @@ async function auth(token, accnumber) {
   process.stdin.on("data", async data => {
     var linecount = 0, lines = String(data)
     while (lines.length > 0) {
-      if (linecount >= 1000) {
+      if (linecount >= 250) {
         break
       }
       lines = lines.slice(process.stdout.columns)
@@ -294,14 +301,11 @@ async function auth(token, accnumber) {
     process.stdout.clearScreenDown()
     command(String(data).trim(), "CLI")
   })
-
+  
   client.on("ready", async () => {
     notif(`Connected to Discord! Logged in as ${client.user.tag} (${client.user.id})`, 86, 98, 246)
     if (config.activity.enabled) {
       client.user.setStatus(String(config.activity.type))
-    }
-    if (accnumber != undefined) {
-      prefix = `[${client.user.tag}] `
     }
   })
 
@@ -331,36 +335,45 @@ async function auth(token, accnumber) {
       }
     }
     msg_create: {
-      if (config.msg_create_event.enabled_server && msg.channel.type == "text") {
-        if (config.msg_create_event.ignore_bots && msg.author.bot) {
-         break msg_create
-        }
-        if (config.msg_create_event.notify) {
-          var message = await removenewlines(msg.content)
-          message = await truncate(message)
-          notif(`${prefix}Message Create: From ${msg.author.tag} in ${msg.guild.name}, #${msg.channel.name}: ${message}`, config.msg_create_event.notify_r, config.msg_create_event.notify_g, config.msg_create_event.notify_b)
-        }
-        if (config.msg_create_event.log) {
-          var attachments = await getattachments(msg)
-          var channelinfo = await getchannelinfo(msg)
-          var message = await removenewlines(msg.content)
-          await log(`${prefix}Message Create: From ${msg.author.tag} (${msg.author.id}) in ${channelinfo}, sent at ${(msg.createdAt.getTime()/1000).toFixed(0)} with {${attachments}} attached: ${message}`)
-        }
+      if (config.msg_create_event.ignore_bots && msg.author.bot) {
+        break msg_create
       }
-      if (config.msg_create_event.enabled_dm && msg.channel.type == 'dm') {
-        if (config.msg_create_event.ignore_bots && msg.author.bot) {
-          break msg_create
+      if (config.msg_create_event.enabled_server && msg.channel.type == "text" || config.msg_create_event.enabled_dm && msg.channel.type == 'dm') {
+        if (config.msg_create_event.enable_filter) {
+          var check = await doesinclude(msg.content, config.msg_create_event.filter, config.msg_create_event.filter_case_sensitive, config.splitter)
+          if (!config.msg_create_event.invert_filter && !check || config.msg_create_event.invert_filter && check) {
+            return
+          }
+        }
+        if (config.msg_create_event.enable_user_list) {
+          var check = await doesinclude(msg.author.id, config.msg_create_event.user_whitelist, false, config.splitter)
+          if (!config.msg_create_event.invert_user_list && !check || config.msg_create_event.invert_user_list && check) {
+            return
+          }
+        }
+        if (config.msg_create_event.enable_channel_list) {
+          var check = await doesinclude(msg.channel.id, config.msg_create_event.channel_whitelist, false, config.splitter)
+          if (!config.msg_create_event.invert_channel_list && !check || config.msg_create_event.invert_channel_list && check) {
+            return
+          }
+        }
+        if (config.msg_create_event.enable_guild_list) {
+          var check = await doesinclude(msg.guild.id, config.msg_create_event.guild_whitelist, false, config.splitter)
+          if (!config.msg_create_event.invert_guild_list && !check || config.msg_create_event.invert_guild_list && check) {
+            return
+          }
         }
         if (config.msg_create_event.notify) {
           var message = await removenewlines(msg.content)
           message = await truncate(message)
-          notif(`${prefix}Message Create: From ${msg.author.tag} in Direct Messages: ${message}`, config.msg_create_event.notify_r, config.msg_create_event.notify_g, config.msg_create_event.notify_b)
+          var simpleinfo = await getchannelinfo(msg, true)
+          notif(`Message Create: From ${msg.author.tag} in ${simpleinfo}: ${message}`, config.msg_create_event.notify_r, config.msg_create_event.notify_g, config.msg_create_event.notify_b)
         }
         if (config.msg_create_event.log) {
           var attachments = await getattachments(msg)
           var channelinfo = await getchannelinfo(msg)
           var message = await removenewlines(msg.content)
-          await log(`${prefix}Message Create: From ${msg.author.tag} (${msg.author.id}) in ${channelinfo}, sent at ${(msg.createdAt.getTime()/1000).toFixed(0)} with {${attachments}} attached: ${message}`)
+          await log(`Message Create: From ${msg.author.tag} (${msg.author.id}) in ${channelinfo}, sent at ${(msg.createdAt.getTime()/1000).toFixed(0)} with {${attachments}} attached: ${message}`)
         }
       }
     }
@@ -369,46 +382,121 @@ async function auth(token, accnumber) {
   client.on('messageDelete', async msg => {
     if (config.msg_delete_event.enabled) {
       if (config.msg_delete_event.ignore_bots && msg.author.bot) {return}
+      if (config.msg_delete_event.enable_filter) {
+        var check = await doesinclude(msg.content, config.msg_delete_event.filter, config.msg_delete_event.filter_case_sensitive, config.splitter)
+        if (!config.msg_delete_event.invert_filter && !check || config.msg_delete_event.invert_filter && check) {
+          return
+        }
+      }
+      if (config.msg_delete_event.enable_user_list) {
+        var check = await doesinclude(msg.author.id, config.msg_delete_event.user_whitelist, false, config.splitter)
+        if (!config.msg_delete_event.invert_user_list && !check || config.msg_delete_event.invert_user_list && check) {
+          return
+        }
+      }
+      if (config.msg_delete_event.enable_channel_list) {
+        var check = await doesinclude(msg.channel.id, config.msg_delete_event.channel_whitelist, false, config.splitter)
+        if (!config.msg_delete_event.invert_channel_list && !check || config.msg_delete_event.invert_channel_list && check) {
+          return
+        }
+      }
+      if (config.msg_delete_event.enable_guild_list) {
+        var check = await doesinclude(msg.guild.id, config.msg_delete_event.guild_whitelist, false, config.splitter)
+        if (!config.msg_delete_event.invert_guild_list && !check || config.msg_delete_event.invert_guild_list && check) {
+          return
+        }
+      }
       if (config.msg_delete_event.notify) {
         var message = await removenewlines(msg.content)
         message = await truncate(message)
         var channelinfo = await getchannelinfo(msg, true)
-        notif(`${prefix}Message Delete: From ${msg.author.tag} in ${channelinfo}: ${message}`, config.msg_delete_event.notify_r, config.msg_delete_event.notify_g, config.msg_delete_event.notify_b)
+        notif(`Message Delete: From ${msg.author.tag} in ${channelinfo}: ${message}`, config.msg_delete_event.notify_r, config.msg_delete_event.notify_g, config.msg_delete_event.notify_b)
       }
       if (config.msg_delete_event.log) {
         var attachments = await getattachments(msg)
         var channelinfo = await getchannelinfo(msg)
         var message = await removenewlines(msg.content)
-        await log(`${prefix}Message Delete: From ${msg.author.tag} (${msg.author.id}) in ${channelinfo}, sent at ${(msg.createdAt.getTime()/1000).toFixed(0)} with {${attachments}} attached: ${message}`)
+        await log(`Message Delete: From ${msg.author.tag} (${msg.author.id}) in ${channelinfo}, sent at ${(msg.createdAt.getTime()/1000).toFixed(0)} with {${attachments}} attached: ${message}`)
       }
     }
   })
 
   client.on("messageDeleteBulk", async msgs => {
     if (config.msg_purge_event.enabled) {
-      if (config.msg_purge_event.notify) {
-        var channelinfo = await getchannelinfo(msgs.first(), true)
-        notif(`${prefix}Message Purge: ${msgs.array().length} messages, first from ${msgs.first().author.tag} in ${channelinfo}`, config.msg_purge_event.notify_r, config.msg_purge_event.notify_g, config.msg_purge_event.notify_b)
-      }
-      if (config.msg_delete_event.log) {
-        msgs.map(async msg=>{
+      msgs.map(async msg=>{
+        if (config.msg_purge_event.ignore_bots && msg.author.bot) {return}
+        if (config.msg_purge_event.enable_filter) {
+          var check = await doesinclude(msg.content, config.msg_purge_event.filter, config.msg_purge_event.filter_case_sensitive, config.splitter)
+          if (!config.msg_purge_event.invert_filter && !check || config.msg_purge_event.invert_filter && check) {
+            return
+          }
+        }
+        if (config.msg_purge_event.enable_user_list) {
+          var check = await doesinclude(msg.author.id, config.msg_purge_event.user_whitelist, false, config.splitter)
+          if (!config.msg_purge_event.invert_user_list && !check || config.msg_purge_event.invert_user_list && check) {
+            return
+          }
+        }
+        if (config.msg_purge_event.enable_channel_list) {
+          var check = await doesinclude(msg.channel.id, config.msg_purge_event.channel_whitelist, false, config.splitter)
+          if (!config.msg_purge_event.invert_channel_list && !check || config.msg_purge_event.invert_channel_list && check) {
+            return
+          }
+        }
+        if (config.msg_purge_event.enable_guild_list) {
+          var check = await doesinclude(msg.guild.id, config.msg_purge_event.guild_whitelist, false, config.splitter)
+          if (!config.msg_purge_event.invert_guild_list && !check || config.msg_purge_event.invert_guild_list && check) {
+            return
+          }
+        }
+        if (config.msg_purge_event.notify) {
+          var message = await removenewlines(msg.content)
+          message = await truncate(message)
+          var channelinfo = await getchannelinfo(msg, true)
+          notif(`Message Purge: From ${msg.author.tag} (${msg.author.id}) in ${channelinfo}: ${message}`, config.msg_purge_event.notify_r, config.msg_purge_event.notify_g, config.msg_purge_event.notify_b)
+        }
+        if (config.msg_purge_event.log) {
           var attachments = await getattachments(msg)
           var channelinfo = await getchannelinfo(msg)
           var message = await removenewlines(msg.content)
-          await log(`${prefix}Message Purge: From ${msg.author.tag} (${msg.author.id}) in ${channelinfo}, sent at ${(msg.createdAt.getTime()/1000).toFixed(0)} with {${attachments}} attached: ${message}`)
-        })
-      }
+          await log(`Message Purge: From ${msg.author.tag} (${msg.author.id}) in ${channelinfo}, sent at ${(msg.createdAt.getTime()/1000).toFixed(0)} with {${attachments}} attached: ${message}`)
+        }
+      })
     }
   })
 
   client.on("messageUpdate", async (oldmsg, newmsg) => {
     if (config.msg_edit_event.enabled && newmsg.editedAt) {
       if (config.msg_edit_event.ignore_bots && oldmsg.author.bot) {return}
+      if (config.msg_edit_event.enable_filter) {
+        var check = await doesinclude(oldmsg.content, config.msg_edit_event.filter, config.msg_edit_event.filter_case_sensitive, config.splitter)
+        if (!config.msg_edit_event.invert_filter && !check || config.msg_edit_event.invert_filter && check) {
+          return
+        }
+      }
+      if (config.msg_edit_event.enable_user_list) {
+        var check = await doesinclude(oldmsg.author.id, config.msg_edit_event.user_whitelist, false, config.splitter)
+        if (!config.msg_edit_event.invert_user_list && !check || config.msg_edit_event.invert_user_list && check) {
+          return
+        }
+      }
+      if (config.msg_edit_event.enable_channel_list) {
+        var check = await doesinclude(oldmsg.channel.id, config.msg_edit_event.channel_whitelist, false, config.splitter)
+        if (!config.msg_edit_event.invert_channel_list && !check || config.msg_edit_event.invert_channel_list && check) {
+          return
+        }
+      }
+      if (config.msg_edit_event.enable_guild_list) {
+        var check = await doesinclude(oldmsg.guild.id, config.msg_edit_event.guild_whitelist, false, config.splitter)
+        if (!config.msg_edit_event.invert_guild_list && !check || config.msg_edit_event.invert_guild_list && check) {
+          return
+        }
+      }
       if (config.msg_edit_event.notify) {
         var message = await removenewlines(newmsg.content)
         message = await truncate(message)
         var channelinfo = await getchannelinfo(oldmsg, true)
-        notif(`${prefix}Message Edit: From ${oldmsg.author.tag} in ${channelinfo}: ${message}`, config.msg_edit_event.notify_r, config.msg_edit_event.notify_g, config.msg_edit_event.notify_b)
+        notif(`Message Edit: From ${oldmsg.author.tag} in ${channelinfo}: ${message}`, config.msg_edit_event.notify_r, config.msg_edit_event.notify_g, config.msg_edit_event.notify_b)
       }
       if (config.msg_edit_event.log) {
         var attachmentsold = await getattachments(oldmsg)
@@ -416,38 +504,62 @@ async function auth(token, accnumber) {
         var attachmentsnew = await getattachments(newmsg)
         var oldmessage = await removenewlines(oldmsg.content)
         var newmessage = await removenewlines(newmsg.content)
-        await log(`${prefix}Message Edit: From ${oldmsg.author.tag} (${oldmsg.author.id}) in ${channelinfoold}, sent at ${(oldmsg.createdAt.getTime()/1000).toFixed(0)}, edited at ${(newmsg.editedAt.getTime()/1000).toFixed(0)} with {${attachmentsold}} attached before and {${attachmentsnew}} attached after: old content: {${oldmessage}}, new content: {${newmessage}}`)
+        await log(`Message Edit: From ${oldmsg.author.tag} (${oldmsg.author.id}) in ${channelinfoold}, sent at ${(oldmsg.createdAt.getTime()/1000).toFixed(0)}, edited at ${(newmsg.editedAt.getTime()/1000).toFixed(0)} with {${attachmentsold}} attached before and {${attachmentsnew}} attached after: old content: {${oldmessage}}, new content: {${newmessage}}`)
       }
     }
   })
 
   client.on("guildBanAdd", async (server, member) => {
     if (config.guild_ban_event.enabled_self && member.id == client.user.id) {
+      if (config.guild_ban_event.enable_guild_list) {
+        var check = await doesinclude(server.id, config.guild_ban_event.guild_whitelist, false, config.splitter)
+        if (!config.guild_ban_event.invert_guild_list && !check || config.guild_ban_event.invert_guild_list && check) {
+          return
+        }
+      }
       if (config.guild_ban_event.notify) {
-        notif(`${prefix}Guild Ban: You have been banned from ${server.name} (${server.id})`, config.guild_ban_event.notify_r, config.guild_ban_event.notify_g, config.guild_ban_event.notify_b)
+        notif(`Guild Ban: You have been banned from ${server.name} (${server.id})`, config.guild_ban_event.notify_r, config.guild_ban_event.notify_g, config.guild_ban_event.notify_b)
       }
       if (config.guild_ban_event.log) {
-        log(`${prefix}Guild Ban: You have been banned from ${server.name} (${server.id})`)
+        log(`Guild Ban: You have been banned from ${server.name} (${server.id})`)
       }
     }
     if (config.guild_ban_event.enabled_others && member.id != client.user.id) {
       if (config.guild_ban_event.ignore_bots && member.bot) {return}
+      if (config.guild_ban_event.enable_user_list) {
+        var check = await doesinclude(member.id, config.guild_ban_event.user_whitelist, false, config.splitter)
+        if (!config.guild_ban_event.invert_user_list && !check || config.guild_ban_event.invert_user_list && check) {
+          return
+        }
+      }
+      if (config.guild_ban_event.enable_guild_list) {
+        var check = await doesinclude(server.id, config.guild_ban_event.guild_whitelist, false, config.splitter)
+        if (!config.guild_ban_event.invert_guild_list && !check || config.guild_ban_event.invert_guild_list && check) {
+          return
+        }
+      }
       if (config.guild_ban_event.notify) {
-        notif(`${prefix}Guild Ban: ${member.tag} (${member.id}) has been banned from ${server.name} (${server.id})`, config.guild_ban_event.notify_r, config.guild_ban_event.notify_g, config.guild_ban_event.notify_b)
+        notif(`Guild Ban: ${member.tag} (${member.id}) has been banned from ${server.name} (${server.id})`, config.guild_ban_event.notify_r, config.guild_ban_event.notify_g, config.guild_ban_event.notify_b)
       }
       if (config.guild_ban_event.log) {
-        log(`${prefix}Guild Ban: ${member.tag} (${member.id}) has been banned from ${server.name} (${server.id})`)
+        log(`Guild Ban: ${member.tag} (${member.id}) has been banned from ${server.name} (${server.id})`)
       }
     }
   })
 
   client.on('guildDelete', async server => {
     if (config.guild_delete_event.enabled) {
+      if (config.guild_delete_event.enable_guild_list) {
+        var check = await doesinclude(server.id, config.guild_delete_event.guild_whitelist, false, config.splitter)
+        if (!config.guild_delete_event.invert_guild_list && !check || config.guild_delete_event.invert_guild_list && check) {
+          return
+        }
+      }
       if (config.guild_delete_event.notify) {
-        notif(`${prefix}Guild Delete: ${server.name} (${server.id}) was removed from your server list.`, config.guild_delete_event.notify_r, config.guild_delete_event.notify_g, config.guild_delete_event.notify_b)
+        notif(`Guild Delete: ${server.name} (${server.id}) was removed from your server list.`, config.guild_delete_event.notify_r, config.guild_delete_event.notify_g, config.guild_delete_event.notify_b)
       }
       if (config.guild_delete_event.log) {
-        log(`${prefix}Guild Delete: ${server.name} (${server.id}) was removed from your server list (kicked, or server got deleted/terminated).`)
+        log(`Guild Delete: ${server.name} (${server.id}) was removed from your server list (kicked, or server got deleted/terminated).`)
       }
     }
   })
@@ -461,7 +573,7 @@ async function auth(token, accnumber) {
   client.on('messageReactionAdd', async (reaction, user) => {
     if (config.giveaway_sniper.enabled && reaction.count <= 1 && reaction.message.channel.type == 'text') {
       giveawaysniper: {
-        if (config.giveaway_sniper.bot_check && !reaction.message.author.bot) { // garbage but works, atleast the config is very flexible
+        if (config.giveaway_sniper.bot_check && !reaction.message.author.bot) {
           break giveawaysniper
         }
         if (config.giveaway_sniper.enable_filter) {
@@ -491,10 +603,10 @@ async function auth(token, accnumber) {
         }
         var timeout = await rng(config.giveaway_sniper.delay_min, config.giveaway_sniper.delay_max, 0)
         if (config.giveaway_sniper.notify) {
-          notif(`${prefix}Giveaway Sniper: Entering giveaway in (${reaction.message.guild.name}, #${reaction.message.channel.name}) sent by ${reaction.message.author.tag} (${timeout}ms delay)`, config.giveaway_sniper.notify_r, config.giveaway_sniper.notify_g, config.giveaway_sniper.notify_b)
+          notif(`Giveaway Sniper: Entering giveaway in (${reaction.message.guild.name}, #${reaction.message.channel.name}) sent by ${reaction.message.author.tag} (${timeout}ms delay)`, config.giveaway_sniper.notify_r, config.giveaway_sniper.notify_g, config.giveaway_sniper.notify_b)
         }
         if (config.giveaway_sniper.log) {
-          log(`${prefix}Giveaway Sniper: Entering giveaway in (${reaction.message.guild.name}, #${reaction.message.channel.name}) sent by ${reaction.message.author.tag} (${timeout}ms delay)`)
+          log(`Giveaway Sniper: Entering giveaway in (${reaction.message.guild.name}, #${reaction.message.channel.name}) sent by ${reaction.message.author.tag} (${timeout}ms delay)`)
         }
         setTimeout(() => {
           reaction.message.react(emoji)
@@ -503,10 +615,11 @@ async function auth(token, accnumber) {
     }
   })
   process.stdin.resume()
+  process.stdin.setEncoding("utf8")
+  process.stdout.setEncoding("utf8")
   client.login(token)
 }
 
-// magical code to catch errors and prevent the script from crashing
 process.on('unhandledRejection', error => {
   catchexception(error)
 }) 
