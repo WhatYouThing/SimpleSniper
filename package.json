@@ -5,15 +5,15 @@
   "description": "",
   "main": "index.js",
   "dependencies": {
-    "form-data": "^3.0.1",
     "fs": "^0.0.1-security",
-    "legend.js": "^11.7.5",
-    "nodemon": "^2.0.15",
+    "legend.js": "^11.8.7",
     "readline-sync": "^1.4.10"
   },
   "scripts": {
     "start": "title SimpleSniper && node src/index.js",
-    "start-notitle": "node src/index.js"
+    "start-notitle": "node src/index.js",
+    "multirun": "title SimpleSniper && node src/multirun.js",
+    "multirun-notitle": "node src/multirun.js"
   },
   "author": "WhatYouThing",
   "license": "Apache License 2.0"
