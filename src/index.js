@@ -1,14 +1,15 @@
 const Discord = require('legend.js');
 const { writeFile, readFile, appendFile, existsSync } = require('fs');
 const readlinesync = require('readline-sync');
+const http = require('snekfetch');
 
 async function notif(content, r, g, b) {
   var color = await rgbx1b(r, g, b)
-  var time = await getfulldate(false)
+  var time = await getfulldate()
   console.log(`\x1B[38;2;87;90;96m[${time}]\x1b[0m ${color}${content}\x1b[0m`)
 }
 async function log(content) {
-  var time = await getfulldate(false)
+  var time = await getfulldate()
   if (!existsSync(`.simplesniper/log.txt`)) {
     await writefile(`.simplesniper/log.txt`, `[${time}] ${content}`)
   }
@@ -16,35 +17,49 @@ async function log(content) {
     await appendfile(`.simplesniper/log.txt`, `\n[${time}] ${content}`)
   }
 }
-function getfulldate(shitdowscompatibility) { 
+function getfulldate(messag, noideaforagoodname) { 
   return new Promise (resolve => {
-    var date = new Date
-    var day = date.getDate()
+    if (!messag) {
+      var date = new Date
+      var day = date.getDate()
+      var month = date.getMonth() + 1
+      var minute = date.getMinutes() 
+      var hour = date.getHours()
+      var seconds = date.getSeconds()
+      var year = date.getFullYear()
+    }
+    else {
+      if (!noideaforagoodname) {
+        var day = messag.createdAt.getDate()
+        var month = messag.createdAt.getMonth() + 1
+        var minute = messag.createdAt.getMinutes() 
+        var hour = messag.createdAt.getHours()
+        var seconds = messag.createdAt.getSeconds()
+        var year = messag.createdAt.getFullYear()
+      }
+      else {
+        var day = messag.editedAt.getDate()
+        var month = messag.editedAt.getMonth() + 1
+        var minute = messag.editedAt.getMinutes() 
+        var hour = messag.editedAt.getHours()
+        var seconds = messag.editedAt.getSeconds()
+        var year = messag.editedAt.getFullYear()
+      }
+    }
     if (day.toString().length < 2) {
       day = "0" + day
     }
-    var month = date.getMonth() + 1
     if (month.toString().length < 2) {
       month = "0" + month
     }
-    var minute = date.getMinutes() 
     if (minute.toString().length < 2) {
       minute = "0" + minute
     }
-    var hour = date.getHours()
     if (hour.toString().length < 2) {
       hour = "0" + hour
     }
-    var seconds = date.getSeconds()
     if (seconds.toString().length < 2) {
       seconds = "0" + seconds
-    }
-    var ms = date.getMilliseconds()
-    if (ms.toString().length < 2) {
-      ms = "0" + ms
-    }
-    if (ms.toString().length < 3) {
-      ms = "0" + ms
     }
     if (config.american_dates) {
       var daymonth = `${month}-${day}`
@@ -52,12 +67,7 @@ function getfulldate(shitdowscompatibility) {
     else {
       var daymonth = `${day}-${month}`
     }
-    if (shitdowscompatibility) {
-      resolve(`${daymonth}-${date.getFullYear()}_${hour}-${minute}-${seconds}.${ms}`)
-    }
-    else {
-      resolve(`${daymonth}-${date.getFullYear()} ${hour}:${minute}:${seconds}.${ms}`)
-    }
+    resolve(`${daymonth}-${year} ${hour}:${minute}:${seconds}`)
   })
 }
 function writefile(path, content) {
@@ -92,7 +102,7 @@ function readfile(path) {
 }
 async function catchexception(error) {
   if (config.crash_handler.notify) {
-    notif(`A exception has been caught. (${error})`, 255, 75, 75)
+    notif(`A exception has been caught. (${error})`, config.crash_handler.notify_r, config.crash_handler.notify_g, config.crash_handler.notify_b)
   }
   if (config.crash_handler.log) {
     log(`A exception has been caught. (${error})`)
@@ -198,11 +208,40 @@ async function getchannelinfo(msg, simple) {
     }
   })
 }
-async function removenewlines(string) {
+async function removenewlines(string, alternative) {
   return new Promise(resolve =>{
     var output = String(string).split("\n")
-    output = output.join("   ")
+    if (!alternative) {
+      output = output.join("   ")
+    }
+    else {
+      output = output.join("\n\t\t")
+    }
     resolve(String(output))
+  })
+}
+function componenttohex(c) {
+  var hex = c.toString(16);
+  return hex.length == 1 ? "0" + hex : hex;
+}
+function rgbtohex(r, g, b) {
+  return `#${componenttohex(r)}${componenttohex(g)}${componenttohex(b)}`
+}
+async function webhookpost(webhook, embedtitle, embedr, embedg, embedb, emdedcontent) {
+  return new Promise(async resolve =>{
+    var embed = new Discord.RichEmbed()
+    var truncatedcontent = await truncate(emdedcontent, 1997)
+    embed.setDescription(truncatedcontent)
+    embed.setTitle(embedtitle)
+    embed.setColor(rgbtohex(embedr, embedg, embedb))
+    http.post(webhook)
+      .send({embeds: [embed]})
+      .then(a => resolve(true))
+      .catch(async error => {
+        await notif(`A error occured while trying to post to one of your webhooks, logging the webhook's url.`, 255, 75, 75)
+        await log(`Failed to post to webhook: ${webhook}`)
+        resolve(false)
+      })
   })
 }
 
@@ -214,6 +253,17 @@ async function main() {
     process.stdout.clearScreenDown()
   }
   notif(`SimpleSniper-${config.version} initialized.`, 86, 98, 246)
+  if (!config.crash_handler.force_disable) {
+    process.on('unhandledRejection', error => {
+      catchexception(error)
+    }) 
+    process.on('uncaughtException', error => {
+      catchexception(error)
+    })
+  }
+  else {
+    notif(`Exception catching is disabled, the selfbot will likely crash if a error occurs.`, config.crash_handler.notify_r, config.crash_handler.notify_g, config.crash_handler.notify_b)
+  }
   var token
   var launcharg = process.argv.slice(2)
   if (launcharg != '') {
@@ -241,13 +291,17 @@ async function main() {
   auth(String(token))
 }
 async function auth(token) {
+  process.stdin.resume()
+  process.stdin.setEncoding("utf8")
+  process.stdout.setEncoding("utf8")
   const client = new Discord.Client()
+  client.login(token)
   async function command(input, cmdtype) {
     return new Promise(async resolve => {
       if (input.toLowerCase().startsWith("load")) {
         notif(`Running ${cmdtype} Command: ${input}`, 86, 98, 246)
         await readconfig(true)
-        return
+        resolve(0)
       }
       if (input.toLowerCase().startsWith("logout")) {
         notif(`Running ${cmdtype} Command: ${input}`, 86, 98, 246)
@@ -258,7 +312,6 @@ async function auth(token) {
       if (input.toLowerCase().startsWith("exit")) {
         notif(`Running ${cmdtype} Command: ${input}`, 86, 98, 246)
         notif(`Exiting SimpleSniper.`, 86, 98, 246)
-        client.destroy()
         process.exit(0)
       }
       if (input.toLowerCase().startsWith("clear")) {
@@ -269,29 +322,33 @@ async function auth(token) {
         notif(`Running ${cmdtype} Command: ${input}`, 86, 98, 246)
         notif(`Uptime: ${client.uptime}ms | Ping: ${client.ping}`, 86, 98, 246)
       }
+      /*
       if (input.toLowerCase().startsWith("login")) {
         notif(`Running ${cmdtype} Command: ${String(input).split(" ").shift()}`, 86, 98, 246)
         var formattedtoken = String(input).split(" ").pop().trim()
         if (!String(input).includes(" ")) {
-          notif(`You need to provide a token to be used with the command.`, 86, 98, 246)
-          return
+          await notif(`You need to provide a token to be used with the command.`, 86, 98, 246)
+          resolve(undefined)
         }
-        else if (formattedtoken == token) {
-          notif(`Provided token is already used.`, 86, 98, 246)
-          return
+        if (formattedtoken == token) {
+          await notif(`Provided token is already used.`, 86, 98, 246)
+          resolve(undefined)
         }
-        else {
-          auth(formattedtoken)
-        }
+        auth(formattedtoken)
       }
-      resolve(undefined)
+      */
+      if (input.toLowerCase().startsWith("help")) {
+        notif(`Running ${cmdtype} Command: ${String(input).split(" ").shift()}`, 86, 98, 246)
+        notif(`Command List:\n\t> load - Reloads the config file without restarting the script.\n\t> logout - Logs out the currently used account without shutting down the script. Keep in mind that this likely will reset your account token.\n\t> exit - Ends the script's process without properly logging out of Discord (no token reset).\n\t> status - Displays the selfbot's ping and uptime (in miliseconds).`, 86, 98, 246)
+      }
+      resolve(0)
     })
   }
 
   process.stdin.on("data", async data => {
     var linecount = 0, lines = String(data)
     while (lines.length > 0) {
-      if (linecount >= 250) {
+      if (linecount >= 1000) {
         break
       }
       lines = lines.slice(process.stdout.columns)
@@ -369,11 +426,17 @@ async function auth(token) {
           var simpleinfo = await getchannelinfo(msg, true)
           notif(`Message Create: From ${msg.author.tag} in ${simpleinfo}: ${message}`, config.msg_create_event.notify_r, config.msg_create_event.notify_g, config.msg_create_event.notify_b)
         }
-        if (config.msg_create_event.log) {
+        if (config.msg_create_event.log || config.msg_create_event.webhook_notify_enable) {
           var attachments = await getattachments(msg)
           var channelinfo = await getchannelinfo(msg)
-          var message = await removenewlines(msg.content)
-          await log(`Message Create: From ${msg.author.tag} (${msg.author.id}) in ${channelinfo}, sent at ${(msg.createdAt.getTime()/1000).toFixed(0)} with {${attachments}} attached: ${message}`)
+          var message = await removenewlines(msg.content, true)
+          var date = await getfulldate(msg)
+          if (config.msg_create_event.log) {
+            await log(`Message Create\n\tAuthor: ${msg.author.tag} (${msg.author.id})\n\tGuild, Channel: ${channelinfo}\n\tSent date: ${date}\nAttachments: [${attachments}]\n\tContent:\n\t\t${message}`)
+          }
+          if (config.msg_create_event.webhook_notify_enable) {
+            webhookpost(config.msg_create_event.webhook_url, "Message Create", config.msg_create_event.notify_r, config.msg_create_event.notify_g, config.msg_create_event.notify_b, `**Author**: ${msg.author.tag} (${msg.author.id})\n**Guild, Channel**: ${channelinfo}\n**Sent date**: ${date}\n**Attachments**: [${attachments}]\n**Content**: ${message}`)
+          }
         }
       }
     }
@@ -412,11 +475,17 @@ async function auth(token) {
         var channelinfo = await getchannelinfo(msg, true)
         notif(`Message Delete: From ${msg.author.tag} in ${channelinfo}: ${message}`, config.msg_delete_event.notify_r, config.msg_delete_event.notify_g, config.msg_delete_event.notify_b)
       }
-      if (config.msg_delete_event.log) {
+      if (config.msg_delete_event.log || config.msg_delete_event.webhook_notify_enable) {
         var attachments = await getattachments(msg)
         var channelinfo = await getchannelinfo(msg)
-        var message = await removenewlines(msg.content)
-        await log(`Message Delete: From ${msg.author.tag} (${msg.author.id}) in ${channelinfo}, sent at ${(msg.createdAt.getTime()/1000).toFixed(0)} with {${attachments}} attached: ${message}`)
+        var message = await removenewlines(msg.content, true)
+        var date = await getfulldate(msg)
+        if (config.msg_delete_event.log) {
+          await log(`Message Delete\n\tAuthor: ${msg.author.tag} (${msg.author.id})\n\tGuild, Channel: ${channelinfo}\n\tSent date: ${date}\n\tAttachments: [${attachments}]\n\tContent:\n\t\t${message}`)
+        }
+        if (config.msg_delete_event.webhook_notify_enable) {
+          webhookpost(config.msg_delete_event.webhook_url, "Message Delete", config.msg_delete_event.notify_r, config.msg_delete_event.notify_g, config.msg_delete_event.notify_b, `**Author**: ${msg.author.tag} (${msg.author.id})\n**Guild, Channel**: ${channelinfo}\n**Sent date**: ${date}\n**Attachments**: [${attachments}]\n**Content**: ${message}`)
+        }
       }
     }
   })
@@ -455,11 +524,17 @@ async function auth(token) {
           var channelinfo = await getchannelinfo(msg, true)
           notif(`Message Purge: From ${msg.author.tag} (${msg.author.id}) in ${channelinfo}: ${message}`, config.msg_purge_event.notify_r, config.msg_purge_event.notify_g, config.msg_purge_event.notify_b)
         }
-        if (config.msg_purge_event.log) {
+        if (config.msg_purge_event.log || config.msg_purge_event.webhook_notify_enable) {
           var attachments = await getattachments(msg)
           var channelinfo = await getchannelinfo(msg)
-          var message = await removenewlines(msg.content)
-          await log(`Message Purge: From ${msg.author.tag} (${msg.author.id}) in ${channelinfo}, sent at ${(msg.createdAt.getTime()/1000).toFixed(0)} with {${attachments}} attached: ${message}`)
+          var message = await removenewlines(msg.content, true)
+          var date = await getfulldate(msg)
+          if (config.msg_purge_event.log) {
+            await log(`Message Purge\n\tAuthor: ${msg.author.tag} (${msg.author.id})\n\tGuild, Channel: ${channelinfo}\n\tSent date: ${date}\n\tAttachments: [${attachments}]\n\tContent:\n\t\t${message}`)
+          }
+          if (config.msg_purge_event.webhook_notify_enable) {
+            webhookpost(config.msg_purge_event.webhook_url, "Message Purge", config.msg_purge_event.notify_r, config.msg_purge_event.notify_g, config.msg_purge_event.notify_b, `**Author**: ${msg.author.tag} (${msg.author.id})\n**Guild, Channel**: ${channelinfo}\n**Sent date**: ${date}\n**Attachments**: [${attachments}]\n**Content**: ${message}`)
+          }
         }
       })
     }
@@ -498,13 +573,20 @@ async function auth(token) {
         var channelinfo = await getchannelinfo(oldmsg, true)
         notif(`Message Edit: From ${oldmsg.author.tag} in ${channelinfo}: ${message}`, config.msg_edit_event.notify_r, config.msg_edit_event.notify_g, config.msg_edit_event.notify_b)
       }
-      if (config.msg_edit_event.log) {
+      if (config.msg_edit_event.log || config.msg_edit_event.webhook_notify_enable) {
         var attachmentsold = await getattachments(oldmsg)
         var channelinfoold = await getchannelinfo(oldmsg)
         var attachmentsnew = await getattachments(newmsg)
-        var oldmessage = await removenewlines(oldmsg.content)
-        var newmessage = await removenewlines(newmsg.content)
-        await log(`Message Edit: From ${oldmsg.author.tag} (${oldmsg.author.id}) in ${channelinfoold}, sent at ${(oldmsg.createdAt.getTime()/1000).toFixed(0)}, edited at ${(newmsg.editedAt.getTime()/1000).toFixed(0)} with {${attachmentsold}} attached before and {${attachmentsnew}} attached after: old content: {${oldmessage}}, new content: {${newmessage}}`)
+        var oldmessage = await removenewlines(oldmsg.content, true)
+        var newmessage = await removenewlines(newmsg.content, true)
+        var date = await getfulldate(oldmsg)
+        var editdate = await getfulldate(newmsg, true)
+        if (config.msg_edit_event.log) {
+          await log(`Message Edit\n\tAuthor: ${oldmsg.author.tag} (${oldmsg.author.id})\n\tGuild, Channel: ${channelinfoold}\n\tSent date: ${date}\n\tEdited date: ${editdate}\n\tOld Attachments: [${attachmentsold}]\n\tOld Content:\n\t\t${oldmessage}\n\tNew Attachments: [${attachmentsnew}]\n\tNew Content:\n\t\t${newmessage}`)
+        }
+        if (config.msg_edit_event.webhook_notify_enable) {
+          webhookpost(config.msg_edit_event.webhook_url, "Message Edit", config.msg_edit_event.notify_r, config.msg_edit_event.notify_g, config.msg_edit_event.notify_b, `**Author**: ${oldmsg.author.tag} (${oldmsg.author.id})\n**Guild, Channel**: ${channelinfoold}\n**Sent date**: ${date}\n**Edited date**: ${editdate}\n**Old Attachments**: [${attachmentsold}]\n**Old Content**: ${oldmessage}\n**New Attachments**: [${attachmentsnew}]\n**New Content**: ${newmessage}\n**Link**: https://discord.com/channels/${oldmsg.guild.id}/${oldmsg.channel.id}/${oldmsg.id}`)
+        }
       }
     }
   })
@@ -518,10 +600,13 @@ async function auth(token) {
         }
       }
       if (config.guild_ban_event.notify) {
-        notif(`Guild Ban: You have been banned from ${server.name} (${server.id})`, config.guild_ban_event.notify_r, config.guild_ban_event.notify_g, config.guild_ban_event.notify_b)
+        notif(`Self Guild Ban: You have been banned from ${server.name} (${server.id})`, config.guild_ban_event.notify_r, config.guild_ban_event.notify_g, config.guild_ban_event.notify_b)
       }
       if (config.guild_ban_event.log) {
-        log(`Guild Ban: You have been banned from ${server.name} (${server.id})`)
+        log(`Self Guild Ban: You have been banned from ${server.name} (${server.id})`)
+      }
+      if (config.guild_ban_event.webhook_notify_enable) {
+        webhookpost(config.guild_ban_event.webhook_url, "Self Guild Ban", config.guild_ban_event.notify_r, config.guild_ban_event.notify_g, config.guild_ban_event.notify_b, `You have been banned from ${server.name} (${server.id})`)
       }
     }
     if (config.guild_ban_event.enabled_others && member.id != client.user.id) {
@@ -544,6 +629,9 @@ async function auth(token) {
       if (config.guild_ban_event.log) {
         log(`Guild Ban: ${member.tag} (${member.id}) has been banned from ${server.name} (${server.id})`)
       }
+      if (config.guild_ban_event.webhook_notify_enable) {
+        webhookpost(config.guild_ban_event.webhook_url, "Guild Ban", config.guild_ban_event.notify_r, config.guild_ban_event.notify_g, config.guild_ban_event.notify_b, `${member.tag} (${member.id}) has been banned from ${server.name} (${server.id})`)
+      }
     }
   })
 
@@ -560,6 +648,9 @@ async function auth(token) {
       }
       if (config.guild_delete_event.log) {
         log(`Guild Delete: ${server.name} (${server.id}) was removed from your server list (kicked, or server got deleted/terminated).`)
+      }
+      if (config.guild_delete_event.webhook_notify_enable) {
+        webhookpost(config.guild_delete_event.webhook_url, "Guild Delete", config.guild_delete_event.notify_r, config.guild_delete_event.notify_g, config.guild_delete_event.notify_b, `${server.name} (${server.id}) was removed from your server list (kicked, or server got deleted/terminated).`)
       }
     }
   })
@@ -608,23 +699,16 @@ async function auth(token) {
         if (config.giveaway_sniper.log) {
           log(`Giveaway Sniper: Entering giveaway in (${reaction.message.guild.name}, #${reaction.message.channel.name}) sent by ${reaction.message.author.tag} (${timeout}ms delay)`)
         }
+        if (config.giveaway_sniper.webhook_notify_enable) {
+          webhookpost(config.giveaway_sniper.webhook_url, "Giveaway Sniper", config.giveaway_sniper.notify_r, config.giveaway_sniper.notify_g, config.giveaway_sniper.notify_b, `Entering giveaway in (${reaction.message.guild.name}, #${reaction.message.channel.name}) sent by ${reaction.message.author.tag} (${timeout}ms delay)\n\nLink to message: https://discord.com/channels/${reaction.message.guild.id}/${reaction.message.channel.id}/${reaction.message.id}`)
+        }
         setTimeout(() => {
           reaction.message.react(emoji)
         }, timeout);
       }
     }
   })
-  process.stdin.resume()
-  process.stdin.setEncoding("utf8")
-  process.stdout.setEncoding("utf8")
-  client.login(token)
-}
 
-process.on('unhandledRejection', error => {
-  catchexception(error)
-}) 
-process.on('uncaughtException', error => {
-  catchexception(error)
-})
+}
 
 main()
