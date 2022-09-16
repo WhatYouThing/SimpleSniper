@@ -43,4 +43,4 @@ join the discord for support if you are unable to configure the selfbot yourself
 i could add/skid one, but the event that someone does send a nitro in a public text channel is pretty rare. its also possible that the nitro could be sniped by some inferior selfbot user who has better ping than you.
 
 # Contact
-- join up on our [discord server](https://discord.gg/MMA6sbBqKX) if you have any questions, bug reports or just want to join the community.
+- join up on our [discord server](https://discord.gg/MMA6sbBqKX) if you have any questions, bug reports or just want to join the community. the #open-support channel is where you can find support.
