@@ -18,7 +18,7 @@ The script is currently in very early development, so if you do use it, i'll app
 - Webhook notifications
 
 # Dependencies
-- Uou will need to install the latest release of Node.js, which you can get from here: https://nodejs.org/en/
+- You will need to install the latest release of Node.js, which you can get from here: https://nodejs.org/en/
 
 # Installation (Windows)
 - To install the script and get it working, head over to the releases tab and download the most recent SimpleSniper.zip file.
