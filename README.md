@@ -2,7 +2,7 @@
 
 **SimpleSniper is a Node.js script made for Discord, to serve as a useful utility tool for Discord users.**
 
-The script is currently in very early development, so if you do use it, ill appreciate you sharing feedback or giving bug reports through github (or by joining the discord).
+The script is currently in very early development, so if you do use it, i'll appreciate you sharing feedback or giving bug reports through github (or by joining the discord).
 
 <img src=https://cdn.discordapp.com/attachments/768172991020007426/987829538845245460/sniper.png>
 
@@ -22,7 +22,7 @@ The script is currently in very early development, so if you do use it, ill appr
 
 # Installation (Windows)
 - To install the script and get it working, head over to the releases tab and download the most recent SimpleSniper.zip file.
-- After you unpack the zip, go to the `.simplesniper` folder and edit the `config.json` file. There you will find `"token": "your_token_here"`, and to get the script working, you need to replace `your_token_here` with your Discord token. Uyou can google for methods how to obtain the token. Setting the token to `ask` will make the script always ask you for a token upon launch.
+- After you unpack the zip, go to the `.simplesniper` folder and edit the `config.json` file. There you will find `"token": "your_token_here"`, and to get the script working, you need to replace `your_token_here` with your Discord token. You can google for methods how to obtain the token. Setting the token to `ask` will make the script always ask you for a token upon launch.
 - After saving your token, you will have to run the `install_packages.bat` file to install the npm packages.
 - After node tells you it installed x number of packages, you can close the console window and run `launch_simplesniper.bat` to start the script.
 
