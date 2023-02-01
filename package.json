@@ -1,13 +1,14 @@
 {
   "name": "simplesniper",
   "bin": "index.js",
-  "version": "too-lazy-to-update-this-value",
-  "description": "",
+  "version": "0.2.0",
+  "description": "Based Selfbot for Discord",
   "main": "index.js",
+  "type": "module",
   "dependencies": {
-    "fs": "^0.0.1-security",
-    "legend.js": "^11.8.7",
-    "readline-sync": "^1.4.10"
+    "discord.js-selfbot-v13": "^2.10.1",
+    "readline-sync": "^1.4.10",
+    "snekfetch": "^4.0.4"
   },
   "scripts": {
     "start": "title SimpleSniper && node src/index.js",
@@ -15,6 +16,6 @@
     "multirun": "title SimpleSniper && node src/multirun.js",
     "multirun-notitle": "node src/multirun.js"
   },
-  "author": "WhatYouThing",
+  "author": "WhatYouThing#4269",
   "license": "Apache License 2.0"
 }
