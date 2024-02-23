@@ -182,6 +182,32 @@ const util = {
             }
             select.appendChild(element)
         })
+    },
+    async login() {
+        const token = util.gebid("loginInputToken").value.trim()
+        const email = util.gebid("loginInputEmail").value.trim()
+        const pass = util.gebid("loginInputPass").value.trim()
+        const twofactor = util.gebid("loginInput2FA").value
+        if (token) {
+            util.gebid("loginOut").textContent = `Logging in...`
+            const result = await ipcRenderer.invoke("loginToken", { token: token })
+            if (!result.success) {
+                util.gebid("loginOut").textContent = result.error
+            }
+            else {
+                util.gebid("loginOut").textContent = `Successfully logged in as ${result.user}.`
+            }
+        }
+        else if (email && pass) {
+            util.gebid("loginOut").textContent = `Logging in...`
+            const result = await ipcRenderer.invoke("loginNormal", { email: email, pass: pass, code: twofactor })
+            if (!result.success) {
+                util.gebid("loginOut").textContent = result.error
+            }
+            else {
+                util.gebid("loginOut").textContent = `Successfully logged in as ${result.user}.`
+            }
+        }
     }
 }
 
@@ -230,29 +256,16 @@ util.gebid("loginTypeEmail").addEventListener('click', () => {
 })
 
 util.gebid("loginButton").addEventListener("click", async () => {
-    const token = util.gebid("loginInputToken").value.trim()
-    const email = util.gebid("loginInputEmail").value.trim()
-    const pass = util.gebid("loginInputPass").value.trim()
-    const twofactor = util.gebid("loginInput2FA").value
-    if (token) {
-        const result = await ipcRenderer.invoke("loginToken", { token: token })
-        if (!result.success) {
-            util.gebid("loginOut").textContent = result.error
-        }
-        else {
-            util.gebid("loginOut").textContent = `Successfully logged in as ${result.user}.`
-        }
-    }
-    else if (email && pass) {
-        const result = await ipcRenderer.invoke("loginNormal", { email: email, pass: pass, code: twofactor })
-        if (!result.success) {
-            util.gebid("loginOut").textContent = result.error
-        }
-        else {
-            util.gebid("loginOut").textContent = `Successfully logged in as ${result.user}.`
-        }
-    }
+    await util.login()
 })
+
+for (var id of ["loginInputEmail", "loginInputPass", "loginInputToken"]) {
+    util.gebid(id).addEventListener("keydown", async (key) => {
+        if (key.code.toLowerCase() == "enter") {
+            await util.login()
+        }
+    })
+}
 
 util.gebid("mainMenuConsoleInput").addEventListener("keyup", key => {
     if (key.code.toLowerCase() == "enter") {
