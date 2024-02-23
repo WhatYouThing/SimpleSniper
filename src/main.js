@@ -322,6 +322,9 @@ function createWindow() {
       if (log) {
         var out = `[${this.getFullDate()}] ${title} - ${message}`
         fields.map(field => {
+          if (!field.name) {
+            return
+          }
           if (field.links) {
             out += `\n\t\t${field.name}: ${field.links.join(", ")}`
           }
@@ -341,7 +344,10 @@ function createWindow() {
         }
         else {
           var desc = ""
-          fields.map(field=>{
+          fields.map(field => {
+            if (!field.name) {
+              return
+            }
             if (field.links) {
               desc += `\n**${field.name}**: ${field.links.join(", ")}`
             }
@@ -359,8 +365,6 @@ function createWindow() {
       }
     }
   }
-
-  misc.notify(false, false, true, "test 123", "#ffffff", "", [{name: "1", text: "2"}, {name: "3", text: "4"}])
 
   ipcMain.handle("loginToken", async (event, data) => {
     try {
@@ -413,21 +417,17 @@ function createWindow() {
     if (configFile.friendTracker.enabled) {
       if (type == "PENDING_INCOMING") {
         const user = await client.users.fetch(id)
-        if (configFile.friendTracker.notify) {
-          notify.console("Friend Tracker", configFile.friendTracker.color, "", [
-            { name: "Type", text: "Incoming Friend Request" },
-            { name: "From", text: `${user.tag} (${user.id})` }
-          ])
-        }
+        misc.notify(configFile.friendTracker.notify, configFile.friendTracker.log, configFile.friendTracker.webhookNotify, "Friend Tracker", configFile.friendTracker.color, "", [
+          { name: "Type", text: "Incoming Friend Request" },
+          { name: "From", text: `${user.tag} (${user.id})` }
+        ])
       }
       if (type == "FRIEND") {
         const user = await client.users.fetch(id)
-        if (configFile.friendTracker.notify) {
-          notify.console("Friend Tracker", configFile.friendTracker.color, "", [
-            { name: "Type", text: "Friend Request Accepted" },
-            { name: "From", text: `${user.tag} (${user.id})` }
-          ])
-        }
+        misc.notify(configFile.friendTracker.notify, configFile.friendTracker.log, configFile.friendTracker.webhookNotify, "Friend Tracker", configFile.friendTracker.color, "", [
+          { name: "Type", text: "Friend Request Accepted" },
+          { name: "From", text: `${user.tag} (${user.id})` }
+        ])
       }
     }
   })
@@ -435,12 +435,10 @@ function createWindow() {
   client.on("relationshipRemove", async id => {
     if (configFile.friendTracker.enabled) {
       const user = await client.users.fetch(id)
-      if (configFile.friendTracker.notify) {
-        notify.console("Friend Tracker", configFile.friendTracker.color, "", [
-          { name: "Type", text: "Removed As Friend" },
-          { name: "From", text: `${user.tag} (${user.id})` }
-        ])
-      }
+      misc.notify(configFile.friendTracker.notify, configFile.friendTracker.log, configFile.friendTracker.webhookNotify, "Friend Tracker", configFile.friendTracker.color, "", [
+        { name: "Type", text: "Removed As Friend" },
+        { name: "From", text: `${user.tag} (${user.id})` }
+      ])
     }
   })
 

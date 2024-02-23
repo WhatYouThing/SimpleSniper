@@ -17,11 +17,7 @@ const util = {
         }
         return element
     },
-    async getFullDate(msgFrom, americanDate) {
-        var date = await ipcRenderer.invoke("getFullDate")
-        return date
-    },
-    logToConsole(title = "", color = "", message = "", fields = [{ name: "", text: "", links: [] }]) {
+    async logToConsole(title = "", color = "", message = "", fields = [{ name: "", text: "", links: [] }]) {
         var divList = []
         var notifDiv = util.createElement("div", {
             backgroundColor: "#181818",
@@ -62,7 +58,11 @@ const util = {
         titleDiv.insertAdjacentElement("beforeend", titleSpan)
         divList.push(titleDiv)
 
+
         fields.map(field => {
+            if (!field.name) {
+                return
+            }
             if (field.links) {
                 var lineDiv = util.createElement("div", {
                     fontSize: "12px",
@@ -140,7 +140,7 @@ const util = {
         var timeSpan = util.createElement("span", {
             wordBreak: "break-all"
         })
-        timeSpan.textContent = this.getFullDate()
+        timeSpan.textContent = await ipcRenderer.invoke("getFullDate")
         timeDiv.insertAdjacentElement("beforeend", timeSpan)
         divList.push(timeDiv)
 
@@ -190,7 +190,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     util.addToSelect("mainMenuConfigList", configs)
 })
 
-ipcRenderer.on("logToConsole", data => {
+ipcRenderer.on("logToConsole", (event, data) => {
     util.logToConsole(data.title, data.color, data.message, data.fields)
 })
 
@@ -264,8 +264,4 @@ util.gebid("mainMenuConsoleInput").addEventListener("keyup", key => {
         })
         util.gebid("mainMenuConsoleInput").value = ""
     }
-})
-
-util.gebid("configSaveBtn").addEventListener("click", () => {
-
 })
