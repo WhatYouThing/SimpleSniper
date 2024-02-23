@@ -287,3 +287,11 @@ util.gebid("configReloadList").addEventListener("click", async () => {
 util.gebid("configLoad").addEventListener("click", async () => {
     await ipcRenderer.invoke("loadConfigFile", util.gebid("configList").value)
 })
+
+util.gebid("configCopy").addEventListener("click", async () => {
+    await ipcRenderer.invoke("copyConfigFile", util.gebid("configList").value)
+})
+
+util.gebid("configDelete").addEventListener("click", async () => {
+    await ipcRenderer.invoke("deleteConfigFile", util.gebid("configList").value)
+})

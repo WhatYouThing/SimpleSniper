@@ -410,6 +410,18 @@ function createWindow() {
     configFile = JSON.parse(fs.readFileSync(util.path(`Configs/${data}.json`)).toString())
   })
 
+  ipcMain.handle("copyConfigFile", (event, data) => {
+    fs.copyFileSync(util.path(`Configs/${data}.json`), util.path(`Configs/${data} (Copy).json`))
+  })
+
+  ipcMain.handle("deleteConfigFile", (event, data) => {
+    fs.rmSync(util.path(`Configs/${data}.json`))
+    var configs = fs.readdirSync(util.path("Configs"))
+    if (configs.length == 0) {
+      fs.writeFileSync(util.path("Configs/default.json"), JSON.stringify(defaultConfig, null, 4))
+    }
+  })
+
   client.on("ready", () => {
     misc.notify(true, false, false, "Selfbot Initialized", configFile.misc.defaultColor, `Successfully logged in as ${client.user.tag} (${client.user.id})`)
     if (configFile.autoStatus != "disabled") {
