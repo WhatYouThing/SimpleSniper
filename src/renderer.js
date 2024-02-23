@@ -17,37 +17,9 @@ const util = {
         }
         return element
     },
-    getFullDate(msgFrom, isEdited, americanDate) {
-        if (msgFrom) {
-            if (isEdited) {
-                dateFrom = msgFrom.editedAt
-            }
-            else {
-                dateFrom = msgFrom.createdAt
-            }
-        }
-        else {
-            var dateFrom = new Date
-        }
-        var dateValues = [
-            dateFrom.getDate(),
-            dateFrom.getMonth() + 1,
-            dateFrom.getFullYear(),
-            dateFrom.getHours(),
-            dateFrom.getMinutes(),
-            dateFrom.getSeconds()
-        ]
-        dateValues.map((value, index) => {
-            if (String(value).length < 2) {
-                dateValues[index] = `0${value}`
-            }
-        })
-        if (americanDate) {
-            return `${dateValues[1]}-${dateValues[0]}-${dateValues[2]} ${dateValues[3]}:${dateValues[4]}:${dateValues[5]}`
-        }
-        else {
-            return `${dateValues[0]}-${dateValues[1]}-${dateValues[2]} ${dateValues[3]}:${dateValues[4]}:${dateValues[5]}`
-        }
+    async getFullDate(msgFrom, americanDate) {
+        var date = await ipcRenderer.invoke("getFullDate")
+        return date
     },
     logToConsole(title = "", color = "", message = "", fields = [{ name: "", text: "", links: [] }]) {
         var divList = []

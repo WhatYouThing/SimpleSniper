@@ -29,9 +29,7 @@ const defaultConfig = {
     webhookUrl: "",
     defaultColor: "#5662f6"
   },
-  autoStatus: {
-    type: "invisible"
-  },
+  autoStatus: "invisible",
   tokenLogProtex: {
     mode: 0,
     discordPass: "",
@@ -284,22 +282,85 @@ function createWindow() {
     return { action: "deny" }
   })
 
-  const util = {
-    notify(console = true, log = true, webhook = true, title = "", color = "", message = "", fields = [{ name: "", text: "", links: [] }]) {
+  const misc = {
+    getFullDate(msg) {
+      if (msg) {
+        if (msg.editedAt) {
+          dateFrom = msg.editedAt
+        }
+        else {
+          dateFrom = msg.createdAt
+        }
+      }
+      else {
+        var dateFrom = new Date
+      }
+      var dateValues = [
+        dateFrom.getDate(),
+        dateFrom.getMonth() + 1,
+        dateFrom.getFullYear(),
+        dateFrom.getHours(),
+        dateFrom.getMinutes(),
+        dateFrom.getSeconds()
+      ]
+      dateValues.map((value, index) => {
+        if (String(value).length < 2) {
+          dateValues[index] = `0${value}`
+        }
+      })
+      if (configFile.misc.dateFormat == 1) {
+        return `${dateValues[1]}-${dateValues[0]}-${dateValues[2]} ${dateValues[3]}:${dateValues[4]}:${dateValues[5]}`
+      }
+      else {
+        return `${dateValues[0]}-${dateValues[1]}-${dateValues[2]} ${dateValues[3]}:${dateValues[4]}:${dateValues[5]}`
+      }
+    },
+    async notify(console = true, log = true, webhook = true, title = "", color = "", message = "", fields = [{ name: "", text: "", links: [] }]) {
       if (console) {
         mainWindow.webContents.send("logToConsole", { title, color, message, fields })
       }
       if (log) {
-        fs.appendFileSync(util.path("Log.txt"), text)
+        var out = `[${this.getFullDate()}] ${title} - ${message}`
+        fields.map(field => {
+          if (field.links) {
+            out += `\n\t\t${field.name}: ${field.links.join(", ")}`
+          }
+          else {
+            out += `\n\t\t${field.name}: ${field.text}`
+          }
+        })
+        fs.appendFileSync(util.path("Log.txt"), out)
       }
-    },
-    log(text = "") {
-      
-    },
-    webhook(text = "") {
-      http.post(configFile.misc.webhookUrl)
+      if (webhook && configFile.misc.webhookUrl) {
+        var embed = new Discord.MessageEmbed()
+          .setTitle(title)
+          .setColor(color)
+          .setFooter({ text: this.getFullDate() })
+        if (message) {
+          embed.setDescription(message)
+        }
+        else {
+          var desc = ""
+          fields.map(field=>{
+            if (field.links) {
+              desc += `\n**${field.name}**: ${field.links.join(", ")}`
+            }
+            else {
+              desc += `\n**${field.name}**: ${field.text}`
+            }
+          })
+          embed.setDescription(desc)
+        }
+        await http.post(configFile.misc.webhookUrl, {
+          data: {
+            embeds: [embed]
+          }
+        })
+      }
     }
   }
+
+  misc.notify(false, false, true, "test 123", "#ffffff", "", [{name: "1", text: "2"}, {name: "3", text: "4"}])
 
   ipcMain.handle("loginToken", async (event, data) => {
     try {
@@ -332,13 +393,8 @@ function createWindow() {
     }
   })
 
-  ipcMain.handle("logToFile", async (event, data) => {
-    var filePath = util.path("Log.txt")
-    if (!fs.existsSync(filePath)) {
-      fs.writeFileSync(filePath, "")
-    }
-    fs.appendFileSync(filePath, data)
-    return
+  ipcMain.handle("getFullDate", async (event, data) => {
+    return misc.getFullDate()
   })
 
   ipcMain.handle("getConfigList", (event, data) => {
@@ -347,7 +403,10 @@ function createWindow() {
   })
 
   client.on("ready", () => {
-
+    misc.notify(true, false, false, "Selfbot Initialized", configFile.misc.defaultColor, `Successfully logged in as ${client.user.tag} (${client.user.id})`)
+    if (configFile.autoStatus != "disabled") {
+      client.user.setStatus(configFile.autoStatus)
+    }
   })
 
   client.on("relationshipAdd", async (id, type) => {
