@@ -406,6 +406,10 @@ function createWindow() {
     return configs.map(cfg => cfg.slice(0, cfg.length - 5))
   })
 
+  ipcMain.handle("loadConfigFile", (event, data) => {
+    configFile = JSON.parse(fs.readFileSync(util.path(`Configs/${data}.json`)).toString())
+  })
+
   client.on("ready", () => {
     misc.notify(true, false, false, "Selfbot Initialized", configFile.misc.defaultColor, `Successfully logged in as ${client.user.tag} (${client.user.id})`)
     if (configFile.autoStatus != "disabled") {

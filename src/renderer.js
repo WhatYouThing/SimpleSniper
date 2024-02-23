@@ -213,7 +213,7 @@ const util = {
 
 document.addEventListener("DOMContentLoaded", async () => {
     var configs = await ipcRenderer.invoke("getConfigList", null)
-    util.addToSelect("mainMenuConfigList", configs)
+    util.addToSelect("configList", configs)
 })
 
 ipcRenderer.on("logToConsole", (event, data) => {
@@ -277,4 +277,13 @@ util.gebid("mainMenuConsoleInput").addEventListener("keyup", key => {
         })
         util.gebid("mainMenuConsoleInput").value = ""
     }
+})
+
+util.gebid("configReloadList").addEventListener("click", async () => {
+    var configs = await ipcRenderer.invoke("getConfigList", null)
+    util.addToSelect("configList", configs)
+})
+
+util.gebid("configLoad").addEventListener("click", async () => {
+    await ipcRenderer.invoke("loadConfigFile", util.gebid("configList").value)
 })
