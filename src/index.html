@@ -1,0 +1,1042 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>SimpleSniper</title>
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+
+<body>
+  <script>
+    function gebid(id) {
+      return document.getElementById(id)
+    }
+    var currentDiv = "loginMenu"
+    function displayDiv(toShow) {
+      gebid(currentDiv).style.display = "none"
+      gebid(toShow).style.display = "flex"
+      currentDiv = toShow
+    }
+    function toggleCheckbox(id) {
+      gebid(id).classList.toggle('checked')
+    }
+  </script>
+  <div style="display: flex; width: 100%; height: 100%;">
+    <div class="sidebar">
+      <img src="assets/login.png" class="sidebarButton" onclick="displayDiv('loginMenu')">
+      <img src="assets/features.png" class="sidebarButton" onclick="displayDiv('featuresMenu')">
+      <img src="assets/console.png" class="sidebarButton" onclick="displayDiv('consoleMenu')">
+      <img src="assets/settings.png" class="sidebarButton" onclick="displayDiv('settingsMenu')">
+      <img src="assets/misc.png" class="sidebarButton" onclick="displayDiv('miscMenu')">
+    </div>
+
+    <div id="loginMenu"
+      style="width: 100%; display: flex; align-items: center; flex-direction: column; justify-content: center;">
+      <h1 class="text" style="margin-bottom: 50px;">Log into Discord</h1>
+      <div style="display: flex; flex-direction: row; margin-bottom: 10px;">
+        <button class="inputstyle button mrgntop" id="loginTypeToken" style="margin-right: 40px; width: 250px;">Use
+          Token</button>
+        <button class="inputstyle button mrgntop" id="loginTypeEmail" style="width: 250px;">Use Email &
+          Password</button>
+      </div>
+      <div id="loginScreenToken">
+        <input type="password" placeholder="Your Discord Token" style="width: 500px;"
+          class="inputstyle textinput mrgnbtm" spellcheck="false" id="loginInputToken">
+      </div>
+      <div id="loginScreenEmail" style="display: none; flex-direction: column;">
+        <input type="text" placeholder="Your Discord Email" style="width: 500px;" class="inputstyle textinput mrgnbtm"
+          spellcheck="false" id="loginInputEmail">
+        <input type="password" placeholder="Your Discord Password" style="width: 500px;"
+          class="inputstyle textinput mrgnbtm" spellcheck="false" id="loginInputPass">
+        <input type="number" placeholder="2FA Code (Optional)" style="width: 500px;"
+          class="inputstyle textinput mrgnbtm" spellcheck="false" id="loginInput2FA"
+          title="If you have 2FA enabled on your Discord account, you will have to provide the code from your authenticator app here.">
+      </div>
+      <button class="inputstyle button mrgntop" id="loginButton">Log In</button>
+      <p class="text" style="margin-right: 10px; font-size: 20px;" id="loginOut">Waiting for input...</p>
+    </div>
+
+    <div id="featuresMenu" style="width: 100%; display: none;">
+
+    </div>
+
+    <div id="consoleMenu" class="container" style="display: none; align-items: center; flex-direction: column;">
+      <div class="text container" id="mainMenuConsoleWindow" style="height: 95%;"></div>
+      <input type="text" class="inputstyle textinput" id="mainMenuConsoleInput"
+        style="background-color: #2a2d2e; width: 90%; height: 5%; text-align: left; margin-bottom: 2%; margin-top: 2%;"
+        placeholder="Input command...">
+    </div>
+
+    <div id="settingsMenu" class="container" style="display: none; flex-direction: column; align-items: center;">
+      <div id="mainMenuConfigOptions">
+
+        <div class="configSection">
+          <div class="configTitle">
+            <a>Config Manager</a>
+            <a title="Easily manage your configs.">🛈</a>
+          </div>
+          <div class="configSeperator"></div>
+          <div class="configOption">
+            <a class="configLabel">Config:</a>
+            <select class="configSelect" id="mainMenuConfigList"></select>
+            <button class="configButton">Reload List</button>
+          </div>
+          <div class="configOption">
+            <a class="configLabel">Options:</a>
+            <button class="configButton">Load</button>
+            <button class="configButton">Save</button>
+            <button class="configButton">Copy</button>
+            <button class="configButton">Delete</button>
+            <button class="configButton">Make Default</button>
+            <a class="configLabel" title="All of these options apply to the selected config.">🛈</a>
+          </div>
+          <div class="configOption">
+            <a class="configLabel">Rename Config:</a>
+            <input type="text" placeholder="New Name" class="configInput" spellcheck="false" style="width: 200px;">
+            <button class="configButton">Change</button>
+            <a class="configLabel" title="Change the name of the selected config.">🛈</a>
+          </div>
+          <div>
+            <a class="configLabel">New Config:</a>
+            <input type="text" placeholder="Config Name" class="configInput" spellcheck="false" style="width: 200px;">
+            <button class="configButton">Create</button>
+            <a class="configLabel" title="Create a brand new config with the default settings.">🛈</a>
+          </div>
+        </div>
+
+        <div class="configSection">
+          <div class="configTitle">
+            <a>Auto Sign In</a>
+            <a title="Automatically sign into your Discord account when starting the selfbot.">🛈</a>
+          </div>
+          <div class="configSeperator"></div>
+          <div class="configOption">
+            <a class="configLabel">Type:</a>
+            <select class="configSelect">
+              <option>Token</option>
+              <option>Email & Password</option>
+            </select>
+            <a class="configLabel"
+              title="Choose if you want to use your token, or your credentials to automatically sign in. Only the selected option is used, so if you chose Token, the selfbot wouldn't use your credentials and vice versa.">🛈</a>
+          </div>
+          <div class="configOption">
+            <a class="configLabel">Token:</a>
+            <input type="password" placeholder="Discord Token" class="configInput" spellcheck="false">
+          </div>
+          <div class="configOption">
+            <a class="configLabel">Email:</a>
+            <input type="text" placeholder="Discord Email" class="configInput" spellcheck="false">
+          </div>
+          <div class="configOption">
+            <a class="configLabel">Password:</a>
+            <input type="password" placeholder="Discord Password" class="configInput" spellcheck="false">
+          </div>
+          <div>
+            <a class="configLabel">2FA Type:</a>
+            <select class="configSelect">
+              <option>Disabled</option>
+              <option>Enabled</option>
+            </select>
+            <a class="configLabel"
+              title="Specify whether your Disord account has 2FA enabled or not. If enabled, you will have to manually input your 2FA code to log in. You won't be able to log in if you have 2FA enabled and this option is disabled.">🛈</a>
+          </div>
+        </div>
+
+        <div class="configSection">
+          <div class="configTitle">
+            <a>Misc</a>
+          </div>
+          <div class="configSeperator"></div>
+          <div class="configOption">
+            <a class="configLabel">Date Format:</a>
+            <select class="configSelect">
+              <option>DD:MM:YYYY</option>
+              <option>MM:DD:YYYY</option>
+            </select>
+          </div>
+          <div class="configOption">
+            <a class="configLabel">Webhook URL:</a>
+            <input type="text" placeholder="https://discord.com/api/webhooks/..." class="configInput"
+              spellcheck="false">
+            <a class="configLabel"
+              title="The webhook URL that the selfbot will send all webhook notifications to.">🛈</a>
+          </div>
+          <div class="configOption">
+            <a class="configLabel">Default Color:</a>
+            <input type="text" placeholder="#5662f6" class="configInput" spellcheck="false" style="width: 100px;">
+            <a class="configLabel"
+              title="The color for console notifications that aren't related to any modules.">🛈</a>
+          </div>
+          <div>
+            <a class="configLabel">Hardware Acceleration:</a>
+            <select class="configSelect">
+              <option>Disabled</option>
+              <option>Enabled</option>
+            </select>
+            <a class="configLabel"
+              title="Enabling this is not recommended, as it probably will make the selfbot run worse, but if you already have performance issues, feel free to give it a try. This setting is seperated from the config system, it is saved automatically and will remain the same regardless of config. You must restart SimpleSniper for the changes to take effect.">🛈</a>
+          </div>
+        </div>
+
+        <div class="configSection">
+          <div class="configTitle">
+            <a>Auto Status</a>
+            <a title="Automatically set the status of your Discord account once you sign in.">🛈</a>
+          </div>
+          <div class="configSeperator"></div>
+          <div>
+            <a class="configLabel">Status:</a>
+            <select class="configSelect">
+              <option>Disabled</option>
+              <option>Online</option>
+              <option>Idle</option>
+              <option>Do Not Disturb</option>
+              <option>Invisible</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="configSection">
+          <div class="configTitle">
+            <a>Token Log Protection</a>
+            <a
+              title="A module that tries to prevent strangers from being able to access your Discord account. Please note that 2FA must be disabled on your account for this module to function properly.">🛈</a>
+          </div>
+          <div class="configSeperator"></div>
+          <div class="configOption">
+            <a class="configLabel">Mode:</a>
+            <select class="configSelect">
+              <option>Disabled</option>
+              <option>Normal</option>
+              <option>Aggressive</option>
+              <option>Extreme</option>
+            </select>
+            <a class="configLabel"
+              title="For Normal mode the location must be correct, and either the client or the operating system must be correct. For Aggressive mode, everything must be correct. Extreme mode will automatically sign out any device that signs in after SimpleSniper is started, regardless of location/client/operating system.">🛈</a>
+          </div>
+          <div class="configOption">
+            <a class="configLabel">Password:</a>
+            <input type="password" placeholder="Discord Password" class="configInput" spellcheck="false">
+            <a class="configLabel"
+              title="This module requires the password for your Discord account to be able to sign out unknown devices.">🛈</a>
+          </div>
+          <div class="configOption">
+            <a class="configLabel">Allowed Locations:</a>
+            <a class="configLabel"
+              title="The list of locations (for example: Warsaw, Mazovia, Poland) that new devices are allowed to have. Each location must be seperated by a new line. Case insensitive.">🛈</a>
+          </div>
+          <div class="configOption">
+            <textarea class="configTextarea" wrap="off" spellcheck="false"></textarea>
+          </div>
+          <div class="configOption">
+            <a class="configLabel">Allowed Clients:</a>
+            <a class="configLabel"
+              title="The list of clients (for example: Discord Client, Discord Android, Firefox) that new devices are allowed to have. Each client must be seperated by a new line. Case insensitive.">🛈</a>
+          </div>
+          <div class="configOption">
+            <textarea class="configTextarea" wrap="off" spellcheck="false"></textarea>
+          </div>
+          <div class="configOption">
+            <a class="configLabel">Allowed OS's:</a>
+            <a class="configLabel"
+              title="The list of operating systems (for example: Windows, Android, Linux) that new devices are allowed to have. Each OS must be seperated by a new line. Case insensitive.">🛈</a>
+          </div>
+          <div class="configOption">
+            <textarea class="configTextarea" wrap="off" spellcheck="false"></textarea>
+          </div>
+          <div class="configOption">
+            <a class="configLabel">Interval:</a>
+            <input type="number" placeholder="Time (ms)" class="configInput" spellcheck="false" style="width: 200px;">
+            <a class="configLabel"
+              title="The amount of time (in milliseconds) between the selfbot checking for new devices. This is hard coded to be atleast 10000ms, as with lower values you could get rate limited.">🛈</a>
+          </div>
+          <div class="configOption">
+            <a class="configLabel">Notify:</a>
+            <select class="configSelect">
+              <option>Disabled</option>
+              <option>Enabled</option>
+            </select>
+          </div>
+          <div class="configOption">
+            <a class="configLabel">Webhook Notify:</a>
+            <select class="configSelect">
+              <option>Disabled</option>
+              <option>Enabled</option>
+            </select>
+          </div>
+          <div class="configOption">
+            <a class="configLabel">Write To Log:</a>
+            <select class="configSelect">
+              <option>Disabled</option>
+              <option>Enabled</option>
+            </select>
+          </div>
+          <div class="configOption">
+            <a class="configLabel">Allowed Color:</a>
+            <input type="text" placeholder="#226699" class="configInput" spellcheck="false" style="width: 200px;">
+            <a class="configLabel"
+              title="Console notification color for when a device is allowed. Must be a hex color.">🛈</a>
+          </div>
+          <div>
+            <a class="configLabel">Blocked Color:</a>
+            <input type="text" placeholder="#f4900c" class="configInput" spellcheck="false" style="width: 200px;">
+            <a class="configLabel"
+              title="Console notification color for when a device is blocked. Must be a hex color.">🛈</a>
+          </div>
+        </div>
+
+        <div class="configSection">
+          <div class="configTitle">
+            <a>Error Handler</a>
+            <a
+              title="Notification settings for the error handler. You can keep everything as default if you're a normal user.">🛈</a>
+          </div>
+          <div class="configSeperator"></div>
+          <div class="configOption">
+            <a class="configLabel">Verbose:</a>
+            <select class="configSelect">
+              <option>Disabled</option>
+              <option>Enabled</option>
+            </select>
+          </div>
+          <div class="configOption">
+            <a class="configLabel">Notify:</a>
+            <select class="configSelect">
+              <option>Disabled</option>
+              <option>Enabled</option>
+            </select>
+          </div>
+          <div class="configOption">
+            <a class="configLabel">Webhook Notify:</a>
+            <select class="configSelect">
+              <option>Disabled</option>
+              <option>Enabled</option>
+            </select>
+          </div>
+          <div class="configOption">
+            <a class="configLabel">Write To Log:</a>
+            <select class="configSelect">
+              <option>Disabled</option>
+              <option>Enabled</option>
+            </select>
+          </div>
+          <div>
+            <a class="configLabel">Color:</a>
+            <input type="text" placeholder="#ff4b4b" class="configInput" spellcheck="false" style="width: 200px;">
+          </div>
+        </div>
+
+        <div class="configSection">
+          <div class="configTitle">
+            <a>Friend Tracker</a>
+            <a title="Get notified when someone adds or removes you as a friend.">🛈</a>
+          </div>
+          <div class="configSeperator"></div>
+          <div class="configOption">
+            <a class="configLabel">Toggle:</a>
+            <select class="configSelect">
+              <option>Disabled</option>
+              <option>Enabled</option>
+            </select>
+          </div>
+          <div class="configOption">
+            <a class="configLabel">Notify:</a>
+            <select class="configSelect">
+              <option>Disabled</option>
+              <option>Enabled</option>
+            </select>
+          </div>
+          <div class="configOption">
+            <a class="configLabel">Webhook Notify:</a>
+            <select class="configSelect">
+              <option>Disabled</option>
+              <option>Enabled</option>
+            </select>
+          </div>
+          <div class="configOption">
+            <a class="configLabel">Write To Log:</a>
+            <select class="configSelect">
+              <option>Disabled</option>
+              <option>Enabled</option>
+            </select>
+          </div>
+          <div>
+            <a class="configLabel">Color:</a>
+            <input type="text" placeholder="#f47fff" class="configInput" spellcheck="false" style="width: 200px;">
+          </div>
+        </div>
+
+        <div class="configSection">
+          <div class="configTitle">
+            <a>Message Create</a>
+            <a title="Settings for when a message is received.">🛈</a>
+          </div>
+          <div class="configSeperator"></div>
+          <div class="configOption">
+            <a class="configLabel">Mode:</a>
+            <select class="configSelect">
+              <option>Disabled</option>
+              <option>Server</option>
+              <option>DM</option>
+              <option>Both</option>
+            </select>
+            <a class="configLabel"
+              title="Set if the selfbot should care about every message, only about messages in servers/DM's, or nothing at all.">🛈</a>
+          </div>
+          <div class="configOption">
+            <a class="configLabel">Ignore:</a>
+            <select class="configSelect">
+              <option>Disabled</option>
+              <option>Self</option>
+              <option>Bots</option>
+              <option>Both</option>
+            </select>
+            <a class="configLabel"
+              title="Set if the selfbot should ignore messages that are sent by you and/or any bot.">🛈</a>
+          </div>
+          <div class="configOption">
+            <a class="configLabel">Content Filter:</a>
+            <select class="configSelect">
+              <option>Blacklist</option>
+              <option>Whitelist</option>
+            </select>
+            <a class="configLabel"
+              title="Filter out messages that (don't) have specific text in them. Each filter should be seperated with a new line. If you want to include new lines in your filter, please add '\n' where the new line would be. Case insensitive.">🛈</a>
+          </div>
+          <div class="configOption">
+            <textarea class="configTextarea" wrap="off" spellcheck="false"></textarea>
+          </div>
+          <div class="configOption">
+            <a class="configLabel">User Filter:</a>
+            <select class="configSelect">
+              <option>Blacklist</option>
+              <option>Whitelist</option>
+            </select>
+            <a class="configLabel"
+              title="Filter out messages that are(n't) sent by specific users by their ID. Each user ID should be seperated with a new line.">🛈</a>
+          </div>
+          <div class="configOption">
+            <textarea class="configTextarea" wrap="off" spellcheck="false"></textarea>
+          </div>
+          <div class="configOption">
+            <a class="configLabel">Channel Filter:</a>
+            <select class="configSelect">
+              <option>Blacklist</option>
+              <option>Whitelist</option>
+            </select>
+            <a class="configLabel"
+              title="Filter out messages that are(n't) sent in specific channels by their ID. Each channel ID should be seperated with a new line.">🛈</a>
+          </div>
+          <div class="configOption">
+            <textarea class="configTextarea" wrap="off" spellcheck="false"></textarea>
+          </div>
+          <div class="configOption">
+            <a class="configLabel">Server Filter:</a>
+            <select class="configSelect">
+              <option>Blacklist</option>
+              <option>Whitelist</option>
+            </select>
+            <a class="configLabel"
+              title="Filter out messages that are(n't) sent in specific servers by their ID. Each server ID should be seperated with a new line.">🛈</a>
+          </div>
+          <div class="configOption">
+            <textarea class="configTextarea" wrap="off" spellcheck="false"></textarea>
+          </div>
+          <div class="configOption">
+            <a class="configLabel">Notify:</a>
+            <select class="configSelect">
+              <option>Disabled</option>
+              <option>Enabled</option>
+            </select>
+          </div>
+          <div class="configOption">
+            <a class="configLabel">Webhook Notify:</a>
+            <select class="configSelect">
+              <option>Disabled</option>
+              <option>Enabled</option>
+            </select>
+          </div>
+          <div class="configOption">
+            <a class="configLabel">Write To Log:</a>
+            <select class="configSelect">
+              <option>Disabled</option>
+              <option>Enabled</option>
+            </select>
+          </div>
+          <div>
+            <a class="configLabel">Color:</a>
+            <input type="text" placeholder="#f47fff" class="configInput" spellcheck="false" style="width: 200px;">
+          </div>
+        </div>
+
+        <div class="configSection">
+          <div class="configTitle">
+            <a>Message Delete</a>
+            <a title="Settings for when an existing message is deleted.">🛈</a>
+          </div>
+          <div class="configSeperator"></div>
+          <div class="configOption">
+            <a class="configLabel">Mode:</a>
+            <select class="configSelect">
+              <option>Disabled</option>
+              <option>Server</option>
+              <option>DM</option>
+              <option>Both</option>
+            </select>
+            <a class="configLabel"
+              title="Set if the selfbot should care about every message, only about messages in servers/DM's, or nothing at all.">🛈</a>
+          </div>
+          <div class="configOption">
+            <a class="configLabel">Ignore:</a>
+            <select class="configSelect">
+              <option>Disabled</option>
+              <option>Self</option>
+              <option>Bots</option>
+              <option>Both</option>
+            </select>
+            <a class="configLabel"
+              title="Set if the selfbot should ignore messages that are sent by you and/or any bot.">🛈</a>
+          </div>
+          <div class="configOption">
+            <a class="configLabel">Content Filter:</a>
+            <select class="configSelect">
+              <option>Blacklist</option>
+              <option>Whitelist</option>
+            </select>
+            <a class="configLabel"
+              title="Filter out messages that (don't) have specific text in them. Each filter should be seperated with a new line. If you want to include new lines in your filter, please add '\n' where the new line would be. Case insensitive.">🛈</a>
+          </div>
+          <div class="configOption">
+            <textarea class="configTextarea" wrap="off" spellcheck="false"></textarea>
+          </div>
+          <div class="configOption">
+            <a class="configLabel">User Filter:</a>
+            <select class="configSelect">
+              <option>Blacklist</option>
+              <option>Whitelist</option>
+            </select>
+            <a class="configLabel"
+              title="Filter out messages that are(n't) sent by specific users by their ID. Each user ID should be seperated with a new line.">🛈</a>
+          </div>
+          <div class="configOption">
+            <textarea class="configTextarea" wrap="off" spellcheck="false"></textarea>
+          </div>
+          <div class="configOption">
+            <a class="configLabel">Channel Filter:</a>
+            <select class="configSelect">
+              <option>Blacklist</option>
+              <option>Whitelist</option>
+            </select>
+            <a class="configLabel"
+              title="Filter out messages that are(n't) sent in specific channels by their ID. Each channel ID should be seperated with a new line.">🛈</a>
+          </div>
+          <div class="configOption">
+            <textarea class="configTextarea" wrap="off" spellcheck="false"></textarea>
+          </div>
+          <div class="configOption">
+            <a class="configLabel">Server Filter:</a>
+            <select class="configSelect">
+              <option>Blacklist</option>
+              <option>Whitelist</option>
+            </select>
+            <a class="configLabel"
+              title="Filter out messages that are(n't) sent in specific servers by their ID. Each server ID should be seperated with a new line.">🛈</a>
+          </div>
+          <div class="configOption">
+            <textarea class="configTextarea" wrap="off" spellcheck="false"></textarea>
+          </div>
+          <div class="configOption">
+            <a class="configLabel">Notify:</a>
+            <select class="configSelect">
+              <option>Disabled</option>
+              <option>Enabled</option>
+            </select>
+          </div>
+          <div class="configOption">
+            <a class="configLabel">Webhook Notify:</a>
+            <select class="configSelect">
+              <option>Disabled</option>
+              <option>Enabled</option>
+            </select>
+          </div>
+          <div class="configOption">
+            <a class="configLabel">Write To Log:</a>
+            <select class="configSelect">
+              <option>Disabled</option>
+              <option>Enabled</option>
+            </select>
+          </div>
+          <div>
+            <a class="configLabel">Color:</a>
+            <input type="text" placeholder="#f47fff" class="configInput" spellcheck="false" style="width: 200px;">
+          </div>
+        </div>
+
+        <div class="configSection">
+          <div class="configTitle">
+            <a>Message Purge</a>
+            <a
+              title="Settings for when multiple messages are deleted at the same time. These settings apply seperately for every purged message.">🛈</a>
+          </div>
+          <div class="configSeperator"></div>
+          <div class="configOption">
+            <a class="configLabel">Mode:</a>
+            <select class="configSelect">
+              <option>Disabled</option>
+              <option>Enabled</option>
+            </select>
+            <a class="configLabel"
+              title="When enabled, purges are only considered in servers. Purges in DM's shouldn't be possibe.">🛈</a>
+          </div>
+          <div class="configOption">
+            <a class="configLabel">Ignore:</a>
+            <select class="configSelect">
+              <option>Disabled</option>
+              <option>Self</option>
+              <option>Bots</option>
+              <option>Both</option>
+            </select>
+            <a class="configLabel"
+              title="Set if the selfbot should ignore messages that are sent by you and/or any bot.">🛈</a>
+          </div>
+          <div class="configOption">
+            <a class="configLabel">Content Filter:</a>
+            <select class="configSelect">
+              <option>Blacklist</option>
+              <option>Whitelist</option>
+            </select>
+            <a class="configLabel"
+              title="Filter out messages that (don't) have specific text in them. Each filter should be seperated with a new line. If you want to include new lines in your filter, please add '\n' where the new line would be. Case insensitive.">🛈</a>
+          </div>
+          <div class="configOption">
+            <textarea class="configTextarea" wrap="off" spellcheck="false"></textarea>
+          </div>
+          <div class="configOption">
+            <a class="configLabel">User Filter:</a>
+            <select class="configSelect">
+              <option>Blacklist</option>
+              <option>Whitelist</option>
+            </select>
+            <a class="configLabel"
+              title="Filter out messages that are(n't) sent by specific users by their ID. Each user ID should be seperated with a new line.">🛈</a>
+          </div>
+          <div class="configOption">
+            <textarea class="configTextarea" wrap="off" spellcheck="false"></textarea>
+          </div>
+          <div class="configOption">
+            <a class="configLabel">Channel Filter:</a>
+            <select class="configSelect">
+              <option>Blacklist</option>
+              <option>Whitelist</option>
+            </select>
+            <a class="configLabel"
+              title="Filter out messages that are(n't) sent in specific channels by their ID. Each channel ID should be seperated with a new line.">🛈</a>
+          </div>
+          <div class="configOption">
+            <textarea class="configTextarea" wrap="off" spellcheck="false"></textarea>
+          </div>
+          <div class="configOption">
+            <a class="configLabel">Server Filter:</a>
+            <select class="configSelect">
+              <option>Blacklist</option>
+              <option>Whitelist</option>
+            </select>
+            <a class="configLabel"
+              title="Filter out messages that are(n't) sent in specific servers by their ID. Each server ID should be seperated with a new line.">🛈</a>
+          </div>
+          <div class="configOption">
+            <textarea class="configTextarea" wrap="off" spellcheck="false"></textarea>
+          </div>
+          <div class="configOption">
+            <a class="configLabel">Notify:</a>
+            <select class="configSelect">
+              <option>Disabled</option>
+              <option>Enabled</option>
+            </select>
+          </div>
+          <div class="configOption">
+            <a class="configLabel">Webhook Notify:</a>
+            <select class="configSelect">
+              <option>Disabled</option>
+              <option>Enabled</option>
+            </select>
+          </div>
+          <div class="configOption">
+            <a class="configLabel">Write To Log:</a>
+            <select class="configSelect">
+              <option>Disabled</option>
+              <option>Enabled</option>
+            </select>
+          </div>
+          <div>
+            <a class="configLabel">Color:</a>
+            <input type="text" placeholder="#f47fff" class="configInput" spellcheck="false" style="width: 200px;">
+          </div>
+        </div>
+
+        <div class="configSection">
+          <div class="configTitle">
+            <a>Message Edit</a>
+            <a title="Settings for when a message is edited.">🛈</a>
+          </div>
+          <div class="configSeperator"></div>
+          <div class="configOption">
+            <a class="configLabel">Mode:</a>
+            <select class="configSelect">
+              <option>Disabled</option>
+              <option>Server</option>
+              <option>DM</option>
+              <option>Both</option>
+            </select>
+            <a class="configLabel"
+              title="Set if the selfbot should care about every message, only about messages in servers/DM's, or nothing at all.">🛈</a>
+          </div>
+          <div class="configOption">
+            <a class="configLabel">Ignore:</a>
+            <select class="configSelect">
+              <option>Disabled</option>
+              <option>Self</option>
+              <option>Bots</option>
+              <option>Both</option>
+            </select>
+            <a class="configLabel"
+              title="Set if the selfbot should ignore messages that are sent by you and/or any bot.">🛈</a>
+          </div>
+          <div class="configOption">
+            <a class="configLabel">Content Filter:</a>
+            <select class="configSelect">
+              <option>Blacklist</option>
+              <option>Whitelist</option>
+            </select>
+            <a class="configLabel"
+              title="Filter out messages that (don't) have specific text in them. Each filter should be seperated with a new line. If you want to include new lines in your filter, please add '\n' where the new line would be. Case insensitive.">🛈</a>
+          </div>
+          <div class="configOption">
+            <textarea class="configTextarea" wrap="off" spellcheck="false"></textarea>
+          </div>
+          <div class="configOption">
+            <a class="configLabel">User Filter:</a>
+            <select class="configSelect">
+              <option>Blacklist</option>
+              <option>Whitelist</option>
+            </select>
+            <a class="configLabel"
+              title="Filter out messages that are(n't) sent by specific users by their ID. Each user ID should be seperated with a new line.">🛈</a>
+          </div>
+          <div class="configOption">
+            <textarea class="configTextarea" wrap="off" spellcheck="false"></textarea>
+          </div>
+          <div class="configOption">
+            <a class="configLabel">Channel Filter:</a>
+            <select class="configSelect">
+              <option>Blacklist</option>
+              <option>Whitelist</option>
+            </select>
+            <a class="configLabel"
+              title="Filter out messages that are(n't) sent in specific channels by their ID. Each channel ID should be seperated with a new line.">🛈</a>
+          </div>
+          <div class="configOption">
+            <textarea class="configTextarea" wrap="off" spellcheck="false"></textarea>
+          </div>
+          <div class="configOption">
+            <a class="configLabel">Server Filter:</a>
+            <select class="configSelect">
+              <option>Blacklist</option>
+              <option>Whitelist</option>
+            </select>
+            <a class="configLabel"
+              title="Filter out messages that are(n't) sent in specific servers by their ID. Each server ID should be seperated with a new line.">🛈</a>
+          </div>
+          <div class="configOption">
+            <textarea class="configTextarea" wrap="off" spellcheck="false"></textarea>
+          </div>
+          <div class="configOption">
+            <a class="configLabel">Notify:</a>
+            <select class="configSelect">
+              <option>Disabled</option>
+              <option>Enabled</option>
+            </select>
+          </div>
+          <div class="configOption">
+            <a class="configLabel">Webhook Notify:</a>
+            <select class="configSelect">
+              <option>Disabled</option>
+              <option>Enabled</option>
+            </select>
+          </div>
+          <div class="configOption">
+            <a class="configLabel">Write To Log:</a>
+            <select class="configSelect">
+              <option>Disabled</option>
+              <option>Enabled</option>
+            </select>
+          </div>
+          <div>
+            <a class="configLabel">Color:</a>
+            <input type="text" placeholder="#f47fff" class="configInput" spellcheck="false" style="width: 200px;">
+          </div>
+        </div>
+
+        <div class="configSection">
+          <div class="configTitle">
+            <a>Server Ban</a>
+            <a title="Settings for when you, or another user, get banned from any server you're in.">🛈</a>
+          </div>
+          <div class="configSeperator"></div>
+          <div class="configOption">
+            <a class="configLabel">Mode:</a>
+            <select class="configSelect">
+              <option>Disabled</option>
+              <option>Self</option>
+              <option>Others</option>
+              <option>Both</option>
+            </select>
+            <a class="configLabel"
+              title="Set if the selfbot should care about all bans, only about you/others getting banned, or nothing at all.">🛈</a>
+          </div>
+          <div class="configOption">
+            <a class="configLabel">User Filter:</a>
+            <select class="configSelect">
+              <option>Blacklist</option>
+              <option>Whitelist</option>
+            </select>
+            <a class="configLabel"
+              title="Filter out bans that are(n't) received by specific users by their ID. Each user ID should be seperated with a new line.">🛈</a>
+          </div>
+          <div class="configOption">
+            <textarea class="configTextarea" wrap="off" spellcheck="false"></textarea>
+          </div>
+          <div class="configOption">
+            <a class="configLabel">Server Filter:</a>
+            <select class="configSelect">
+              <option>Blacklist</option>
+              <option>Whitelist</option>
+            </select>
+            <a class="configLabel"
+              title="Filter out bans that (don't) occur in specific servers by their ID. Each server ID should be seperated with a new line.">🛈</a>
+          </div>
+          <div class="configOption">
+            <textarea class="configTextarea" wrap="off" spellcheck="false"></textarea>
+          </div>
+          <div class="configOption">
+            <a class="configLabel">Notify:</a>
+            <select class="configSelect">
+              <option>Disabled</option>
+              <option>Enabled</option>
+            </select>
+          </div>
+          <div class="configOption">
+            <a class="configLabel">Webhook Notify:</a>
+            <select class="configSelect">
+              <option>Disabled</option>
+              <option>Enabled</option>
+            </select>
+          </div>
+          <div class="configOption">
+            <a class="configLabel">Write To Log:</a>
+            <select class="configSelect">
+              <option>Disabled</option>
+              <option>Enabled</option>
+            </select>
+          </div>
+          <div>
+            <a class="configLabel">Color:</a>
+            <input type="text" placeholder="#f47fff" class="configInput" spellcheck="false" style="width: 200px;">
+          </div>
+        </div>
+
+        <div class="configSection">
+          <div class="configTitle">
+            <a>Server Remove</a>
+            <a
+              title="Settings for when you are removed from any server you're in (for any reason other than getting banned).">🛈</a>
+          </div>
+          <div class="configSeperator"></div>
+          <div class="configOption">
+            <a class="configLabel">Mode:</a>
+            <select class="configSelect">
+              <option>Disabled</option>
+              <option>Enabled</option>
+            </select>
+          </div>
+          <div class="configOption">
+            <a class="configLabel">Server Filter:</a>
+            <select class="configSelect">
+              <option>Blacklist</option>
+              <option>Whitelist</option>
+            </select>
+            <a class="configLabel"
+              title="Filter out removals that (don't) occur in specific servers by their ID. Each server ID should be seperated with a new line.">🛈</a>
+          </div>
+          <div class="configOption">
+            <textarea class="configTextarea" wrap="off" spellcheck="false"></textarea>
+          </div>
+          <div class="configOption">
+            <a class="configLabel">Notify:</a>
+            <select class="configSelect">
+              <option>Disabled</option>
+              <option>Enabled</option>
+            </select>
+          </div>
+          <div class="configOption">
+            <a class="configLabel">Webhook Notify:</a>
+            <select class="configSelect">
+              <option>Disabled</option>
+              <option>Enabled</option>
+            </select>
+          </div>
+          <div class="configOption">
+            <a class="configLabel">Write To Log:</a>
+            <select class="configSelect">
+              <option>Disabled</option>
+              <option>Enabled</option>
+            </select>
+          </div>
+          <div>
+            <a class="configLabel">Color:</a>
+            <input type="text" placeholder="#f47fff" class="configInput" spellcheck="false" style="width: 200px;">
+          </div>
+        </div>
+
+        <div class="configSection">
+          <div class="configTitle">
+            <a>Giveaway Sniper</a>
+            <a
+              title="Module to automatically detect giveaways (and optionally join them) that are started in the servers you're in.">🛈</a>
+          </div>
+          <div class="configSeperator"></div>
+          <div class="configOption">
+            <a class="configLabel">Mode:</a>
+            <select class="configSelect">
+              <option>Disabled</option>
+              <option>Detect</option>
+              <option>Detect and Join</option>
+            </select>
+            <a class="configLabel"
+              title="Set if the selfbot should only notify you of giveaways, or if it also should automatically join them.">🛈</a>
+          </div>
+          <div class="configOption">
+            <a class="configLabel">Type:</a>
+            <select class="configSelect">
+              <option>Button</option>
+              <option>Reaction</option>
+              <option>Both</option>
+            </select>
+            <a class="configLabel"
+              title="Set if the giveaway sniper can target giveaways that have a button, a reaction, or either.">🛈</a>
+          </div>
+          <div class="configOption">
+            <a class="configLabel">Embed Filter:</a>
+            <select class="configSelect">
+              <option>Blacklist</option>
+              <option>Whitelist</option>
+            </select>
+            <a class="configLabel"
+              title="Filter out giveaways that (don't) have specific text in the description field of their embed. Each filter should be seperated with a new line. If you want to include new lines in your filter, please add '\n' where the new line would be. Case insensitive.">🛈</a>
+          </div>
+          <div class="configOption">
+            <textarea class="configTextarea" wrap="off" spellcheck="false"></textarea>
+          </div>
+          <div class="configOption">
+            <a class="configLabel">Reaction Filter:</a>
+            <select class="configSelect">
+              <option>Blacklist</option>
+              <option>Whitelist</option>
+            </select>
+            <a class="configLabel"
+              title="Filter out giveaways that (don't) have a specific emoji as their first reaction. Each emoji should be seperated with a new line.">🛈</a>
+          </div>
+          <div class="configOption">
+            <textarea class="configTextarea" wrap="off" spellcheck="false"></textarea>
+          </div>
+          <div class="configOption">
+            <a class="configLabel">Bot Filter:</a>
+            <select class="configSelect">
+              <option>Blacklist</option>
+              <option>Whitelist</option>
+            </select>
+            <a class="configLabel"
+              title="Filter out giveaways that are(n't) sent by specific bots by their ID. Each bot ID should be seperated with a new line.">🛈</a>
+          </div>
+          <div class="configOption">
+            <textarea class="configTextarea" wrap="off" spellcheck="false"></textarea>
+          </div>
+          <div class="configOption">
+            <a class="configLabel">Channel Filter:</a>
+            <select class="configSelect">
+              <option>Blacklist</option>
+              <option>Whitelist</option>
+            </select>
+            <a class="configLabel"
+              title="Filter out giveaways that are(n't) sent in specific channels by their ID. Each channel ID should be seperated with a new line.">🛈</a>
+          </div>
+          <div class="configOption">
+            <textarea class="configTextarea" wrap="off" spellcheck="false"></textarea>
+          </div>
+          <div class="configOption">
+            <a class="configLabel">Server Filter:</a>
+            <select class="configSelect">
+              <option>Blacklist</option>
+              <option>Whitelist</option>
+            </select>
+            <a class="configLabel"
+              title="Filter out giveaways that are(n't) sent in specific servers by their ID. Each server ID should be seperated with a new line.">🛈</a>
+          </div>
+          <div class="configOption">
+            <textarea class="configTextarea" wrap="off" spellcheck="false"></textarea>
+          </div>
+          <div class="configOption">
+            <a class="configLabel">Minimum Delay:</a>
+            <input type="number" placeholder="Time (ms)" class="configInput" spellcheck="false" style="width: 200px;">
+            <a class="configLabel"
+              title="The minimum amount of time (in milliseconds) that the selfbot can wait before joining a detected giveaway. The delay is a random number between the minimum and maximum delays.">🛈</a>
+          </div>
+          <div class="configOption">
+            <a class="configLabel">Maximum Delay:</a>
+            <input type="number" placeholder="Time (ms)" class="configInput" spellcheck="false" style="width: 200px;">
+            <a class="configLabel"
+              title="The maximum amount of time (in milliseconds) that the selfbot can wait before joining a detected giveaway. The delay is a random number between the minimum and maximum delays.">🛈</a>
+          </div>
+          <div class="configOption">
+            <a class="configLabel">Notify:</a>
+            <select class="configSelect">
+              <option>Disabled</option>
+              <option>Enabled</option>
+            </select>
+          </div>
+          <div class="configOption">
+            <a class="configLabel">Webhook Notify:</a>
+            <select class="configSelect">
+              <option>Disabled</option>
+              <option>Enabled</option>
+            </select>
+          </div>
+          <div class="configOption">
+            <a class="configLabel">Write To Log:</a>
+            <select class="configSelect">
+              <option>Disabled</option>
+              <option>Enabled</option>
+            </select>
+          </div>
+          <div>
+            <a class="configLabel">Color:</a>
+            <input type="text" placeholder="#f47fff" class="configInput" spellcheck="false" style="width: 200px;">
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="fullscreen" id="mainMenuConfigDeleteScreen" style="display: none;">
+      <div style="margin-bottom: 10px;">
+        <label style="white-space: pre-line; text-align: center;" class="mrgnbtm text"></label>
+      </div>
+      <div>
+        <button class="inputstyle button mrgntop" style="margin-right: 10px;">Cancel</button>
+        <button class="inputstyle button mrgntop" style="background-color: #ff0000;">Delete</button>
+      </div>
+    </div>
+  </div>
+  <script src="./renderer.js"></script>
+</body>
+
+</html>

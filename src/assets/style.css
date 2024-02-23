@@ -1,0 +1,263 @@
+@font-face {
+    font-display: swap;
+    font-family: "Roboto-Regular";
+    src: url(Roboto-Regular.ttf);
+}
+
+body {
+    background-color: #1f1f1f;
+    height: 100vh;
+    width: 100vw;
+    padding: 0;
+    margin: 0;
+    font-family: Roboto-Regular;
+}
+
+.fullscreen {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.inputstyle {
+    background-color: #181818;
+    border: none;
+    color: #d7d7d7;
+    text-align: center;
+    text-decoration: none;
+    padding: 10px 20px;
+    font-family: Roboto-Regular;
+}
+
+.text {
+    font-family: Roboto-Regular;
+    color: #d7d7d7;
+}
+
+.button {
+    font-family: Roboto-Regular;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.textinput {
+    font-size: 14px;
+    cursor: text;
+    outline: none;
+}
+
+.mrgntop {
+    margin-top: 10px;
+}
+
+.mrgnbtm {
+    margin-bottom: 10px;
+}
+
+.sidebar {
+    display: flex;
+    width: 72px;
+    height: 100%;
+    background-color: #181818;
+    flex-direction: column;
+    align-items: center;
+}
+
+.sidebarButton {
+    margin-top: 5px;
+    background-color: #2a2d2e;
+    width: 32px;
+    height: 32px;
+    padding: 12px;
+    outline: none;
+    cursor: pointer;
+}
+
+.mainmenuentry {
+    margin-top: 10px;
+    margin-left: 10px;
+}
+
+.container {
+    width: 100%;
+    height: 100%;
+    background-color: #1f1f1f;
+    padding: 0 0;
+    text-align: left;
+    cursor: default;
+    overflow: auto;
+}
+
+.container::-webkit-scrollbar {
+    width: 5px;
+    height: 100%;
+    background-color: #1f1f1f;
+}
+
+.container::-webkit-scrollbar-thumb {
+    width: 5px;
+    height: 20%;
+    background-color: #d7d7d7;
+}
+
+option {
+    text-align: left;
+}
+
+.config {
+    font-size: 12px;
+}
+
+.configopt {
+    margin-right: 5px;
+    margin-bottom: 5px;
+}
+
+.configwindow {
+    width: 100%;
+    height: 100%;
+    background-color: #1f1f1f;
+    padding: 0 0;
+    text-align: left;
+    cursor: default;
+    overflow: auto;
+}
+
+.configwindow::-webkit-scrollbar {
+    width: 5px;
+    height: 100%;
+    background-color: #1f1f1f;
+}
+
+.configwindow::-webkit-scrollbar-thumb {
+    width: 5px;
+    height: 20%;
+    background-color: #d7d7d7;
+}
+
+.configInput {
+    background-color: #181818;
+    border: none;
+    color: #d7d7d7;
+    text-align: left;
+    text-decoration: none;
+    padding: 9px 20px;
+    font-family: Roboto-Regular;
+    font-size: 16px;
+    cursor: text;
+    outline: none;
+    width: 400px;
+    margin-right: 5px;
+    vertical-align: middle;
+}
+
+.configTextarea {
+    background-color: #181818;
+    border: none;
+    color: #d7d7d7;
+    text-align: left;
+    text-decoration: none;
+    padding: 10px;
+    font-family: Roboto-Regular;
+    font-size: 16px;
+    cursor: text;
+    outline: none;
+    width: 500px;
+    height: 100px;
+    margin-right: 5px;
+    resize: none;
+    vertical-align: middle;
+}
+
+.configTextarea::-webkit-scrollbar {
+    width: 5px;
+    height: 100%;
+    background-color: #1f1f1f;
+}
+
+.configTextarea::-webkit-scrollbar-thumb {
+    width: 5px;
+    height: 20%;
+    background-color: #d7d7d7;
+}
+
+.configButton {
+    outline: none;
+    margin-right: 5px;
+    padding: 9px 20px;
+    font-family: Roboto-Regular;
+    cursor: pointer;
+    background-color: #181818;
+    border: none;
+    color: #d7d7d7;
+    text-align: center;
+    text-decoration: none;
+    font-size: 16px;
+    vertical-align: middle;
+}
+
+.configLabel {
+    font-family: Roboto-Regular;
+    color: #d7d7d7;
+    font-size: 16px;
+    margin-right: 5px;
+    vertical-align: middle;
+}
+
+.configOption {
+    margin-bottom: 5px;
+}
+
+.configTitle {
+    font-family: Roboto-Regular;
+    color: #d7d7d7;
+    font-size: 24px;
+    margin-bottom: 5px;
+    margin-top: 5px;
+}
+
+.configSelect {
+    outline: none;
+    margin-right: 5px;
+    padding: 9px 20px;
+    cursor: pointer;
+    background-color: #181818;
+    border: none;
+    color: #d7d7d7;
+    text-align: center;
+    text-decoration: none;
+    font-size: 16px;
+    vertical-align: middle;
+    max-width: 250px;
+}
+
+.configSection {
+    margin: 10px;
+    background-color: #2a2d2e;
+    padding: 10px 20px;
+    margin-bottom: 15px;
+    width: 650px;
+}
+
+.configSeperator {
+    width: 100%;
+    height: 2px;
+    background-color: #d7d7d7;
+    margin-bottom: 10px;
+}
+
+.filterlist {
+    cursor: default;
+    width: 150px;
+    padding: 4px 6px;
+}
+
+.filterbtn {
+    cursor: pointer;
+    width: 75px;
+    padding: 5px 7px;
+    text-align: center;
+}

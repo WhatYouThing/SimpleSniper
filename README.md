@@ -1,0 +1,1 @@
+This repo currently contains an extremely early version of the Electron.js SimpleSniper rewrite. Feel free to contribute.
